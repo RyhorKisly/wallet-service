@@ -15,6 +15,7 @@ import io.ylab.walletservice.service.factory.TransactionServiceFactory;
 import io.ylab.walletservice.service.factory.UserServiceFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -29,6 +30,7 @@ public class TransactionServiceTest {
     private AccountService accountService;
 
     @BeforeEach
+    @DisplayName("Initialize classes for tests")
     public void setUp() {
         transactionService = (TransactionService) TransactionServiceFactory.getInstance();
         userService = (UserService) UserServiceFactory.getInstance();
@@ -36,6 +38,7 @@ public class TransactionServiceTest {
     }
 
     @Test
+    @DisplayName("Test for creating transaction")
     void createTest() {
         UserCreateDTO userCreateDTO = new UserCreateDTO("test20", UserRole.USER, "02tset");
         userService.create(userCreateDTO);
@@ -56,6 +59,7 @@ public class TransactionServiceTest {
     }
 
     @Test
+    @DisplayName("Test for getting transaction by id")
     void getById() {
         UserCreateDTO userCreateDTO = new UserCreateDTO("test21", UserRole.USER, "12tset");
         userService.create(userCreateDTO);
@@ -73,6 +77,7 @@ public class TransactionServiceTest {
     }
 
     @Test
+    @DisplayName("Test for getting transaction by account entity")
     void getByAccountEntity() {
         UserCreateDTO userCreateDTO = new UserCreateDTO("test22", UserRole.USER, "22tset");
         userService.create(userCreateDTO);
@@ -98,6 +103,7 @@ public class TransactionServiceTest {
     }
 
     @Test
+    @DisplayName("Test for finding transaction by id with return value as boolean")
     void isExistTest() {
         UserCreateDTO userCreateDTO = new UserCreateDTO("test23", UserRole.USER, "32tset");
         userService.create(userCreateDTO);

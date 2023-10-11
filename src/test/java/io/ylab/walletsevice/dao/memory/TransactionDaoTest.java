@@ -4,6 +4,8 @@ import io.ylab.walletservice.core.enums.Operation;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
 import io.ylab.walletservice.dao.memory.TransactionDao;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -15,10 +17,16 @@ import java.util.UUID;
 
 public class TransactionDaoTest {
 
-    @Test
-    void findByTransactionIdTest() {
-        TransactionDao transactionDao = new TransactionDao();
+    private TransactionDao transactionDao;
 
+    @BeforeEach
+    @DisplayName("Initialize class for tests")
+    public void setUp() {
+        transactionDao = new TransactionDao();
+    }
+    @Test
+    @DisplayName("test for finding transaction by id")
+    void findByTransactionIdTest() {
         String transactionID = "qwe";
         TransactionEntity entity = new TransactionEntity(
                 transactionID, Operation.CREDIT,
@@ -30,9 +38,8 @@ public class TransactionDaoTest {
     }
 
     @Test
+    @DisplayName("Test for finding transaction by id with return type boolean")
     void isExistTest() {
-        TransactionDao transactionDao = new TransactionDao();
-
         String transactionID = "qwer";
         TransactionEntity entity = new TransactionEntity(
                 transactionID, Operation.CREDIT,
@@ -44,9 +51,8 @@ public class TransactionDaoTest {
     }
 
     @Test
-    void testTest() {
-        TransactionDao transactionDao = new TransactionDao();
-
+    @DisplayName("Test for saving transaction")
+    void saveTest() {
         String transactionID = "qwert";
         TransactionEntity entity = new TransactionEntity(
                 transactionID, Operation.CREDIT,
@@ -56,9 +62,8 @@ public class TransactionDaoTest {
     }
 
     @Test
+    @DisplayName("Test for finding history of transaction by id and asc by dtCreate")
     void findAllByNumberAccountAscByDTCreateTest() {
-        TransactionDao transactionDao = new TransactionDao();
-
         String transactionID = "qwerty";
         String transactionID2 = "qwew";
         UUID uuid = UUID.randomUUID();

@@ -10,6 +10,7 @@ import io.ylab.walletservice.service.AccountService;
 import io.ylab.walletservice.service.factory.AccountServiceFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -22,11 +23,13 @@ class AccountServiceTest {
     private AccountDao accountDao;
 
     @BeforeEach
+    @DisplayName("Initialize classes for tests")
     public void setUp() {
         accountDao = (AccountDao) AccountDaoFactory.getInstance();
         accountService = (AccountService) AccountServiceFactory.getInstance();
     }
     @Test
+    @DisplayName("Test for creating account")
     void createTest() {
         UUID uuid = UUID.randomUUID();
         AccountDTO accountDTO = new AccountDTO(uuid, new BigDecimal("0.0"), "test");
@@ -38,6 +41,7 @@ class AccountServiceTest {
     }
 
     @Test
+    @DisplayName("Test for getting account by number of account")
     void getByNumberAccountTest() {
         UUID uuid = UUID.randomUUID();
         AccountEntity entity = new AccountEntity(uuid, new BigDecimal("0.0"), "test1");
@@ -49,6 +53,7 @@ class AccountServiceTest {
     }
 
     @Test
+    @DisplayName("Test for getting account by number of account and login")
     void getByNumberAccountAndLoginTest() {
         UUID uuid = UUID.randomUUID();
         AccountEntity entity = new AccountEntity(uuid, new BigDecimal("0.0"), "test2");
@@ -59,7 +64,9 @@ class AccountServiceTest {
         Assertions.assertEquals(entity, entityCreated);
     }
 
-    @Test void getByLoginTest() {
+    @Test
+    @DisplayName("Test for getting account by login")
+    void getByLoginTest() {
         UUID uuid = UUID.randomUUID();
         AccountEntity entity = new AccountEntity(uuid, new BigDecimal("0.0"), "test33");
         accountDao.save(entity);
@@ -70,6 +77,7 @@ class AccountServiceTest {
     }
 
     @Test
+    @DisplayName("Test for checking correctly or not updated balance on account")
     void updateBalanceIfCreditTest() {
         UUID uuid = UUID.randomUUID();
         TransactionDTO transactionDTO = new TransactionDTO("qwerty", Operation.CREDIT, new BigDecimal("4.3"), uuid);
@@ -84,6 +92,8 @@ class AccountServiceTest {
     }
 
     @Test
+    @DisplayName("Test for checking correctly or not updated balance " +
+            "on account when balance more than sum of transaction with debit transaction")
     void updateBalanceIfDebitTest() {
         UUID uuid = UUID.randomUUID();
         TransactionDTO transactionDTO = new TransactionDTO("qwer", Operation.DEBIT, new BigDecimal("4.3"), uuid);
@@ -98,6 +108,7 @@ class AccountServiceTest {
     }
 
     @Test
+    @DisplayName("Negative test if sum of transaction more than balance on account and transaction is debit")
     void updateBalanceIfDebitMoreThanBalanceTest() {
         UUID uuid = UUID.randomUUID();
         TransactionDTO transactionDTO = new TransactionDTO("qwert", Operation.DEBIT, new BigDecimal("4.3"), uuid);

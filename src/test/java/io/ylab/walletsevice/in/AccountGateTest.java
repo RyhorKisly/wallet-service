@@ -7,6 +7,7 @@ import io.ylab.walletservice.in.AccountGate;
 import io.ylab.walletservice.service.factory.AccountServiceFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -17,12 +18,14 @@ public class AccountGateTest {
     private AccountDao accountDao;
 
     @BeforeEach
+    @DisplayName("Initialize classes for tests")
     public void setUp() {
         accountGate = new AccountGate(AccountServiceFactory.getInstance());
         accountDao = (AccountDao) AccountDaoFactory.getInstance();
     }
 
     @Test
+    @DisplayName("Test for getting account by login")
     void getAccountTest() {
         UUID uuid = UUID.randomUUID();
         AccountEntity entity = new AccountEntity(uuid, new BigDecimal("0.0"), "test24");

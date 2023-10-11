@@ -8,6 +8,7 @@ import io.ylab.walletservice.service.AuditService;
 import io.ylab.walletservice.service.factory.AuditServiceFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -21,12 +22,14 @@ public class AuditServiceTest {
     private AuditService auditService;
 
     @BeforeEach
+    @DisplayName("Initialize classes for tests")
     public void setUp() {
         auditDao = (AuditDao) AuditDaoFactory.getInstance();
         auditService = (AuditService) AuditServiceFactory.getInstance();
     }
 
     @Test
+    @DisplayName("Test for getting audit by login")
     void getAllByLogin() {
         AuditEntity auditEntity =
                 new AuditEntity(UUID.randomUUID(), LocalDateTime.now(), "test01", "firstTestByUser");
@@ -45,6 +48,7 @@ public class AuditServiceTest {
     }
 
     @Test
+    @DisplayName("Test for creating audit")
     void createTest() {
 
         AuditDTO auditDTO = new AuditDTO("test1","firstTestByUser");

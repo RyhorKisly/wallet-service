@@ -3,6 +3,8 @@ package io.ylab.walletsevice.dao.memory;
 import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.memory.AccountDao;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -10,9 +12,16 @@ import java.util.UUID;
 
 public class AccountDaoTest {
 
+    private AccountDao accountDao;
+
+    @BeforeEach
+    @DisplayName("Initialize class for tests")
+    public void setUp() {
+        accountDao = new AccountDao();
+    }
     @Test
+    @DisplayName("Test for finding account by number of account")
     void findByNumberAccount() {
-        AccountDao accountDao = new AccountDao();
         UUID uuid = UUID.randomUUID();
         AccountEntity entity = new AccountEntity(uuid, new BigDecimal("0.0"), "test");
 
@@ -22,8 +31,8 @@ public class AccountDaoTest {
         Assertions.assertEquals(entity, accountEntity);
     }
     @Test
+    @DisplayName("Test for finding account by number of account and user login")
     void findByNumberAccountAndLogin() {
-        AccountDao accountDao = new AccountDao();
         UUID uuid = UUID.randomUUID();
         AccountEntity entity = new AccountEntity(uuid, new BigDecimal("0.0"), "test2");
 
@@ -34,8 +43,9 @@ public class AccountDaoTest {
     }
 
     @Test
+    @DisplayName("Test for finding account by user login")
+
     void findByLogin() {
-        AccountDao accountDao = new AccountDao();
         UUID uuid = UUID.randomUUID();
         AccountEntity entity = new AccountEntity(uuid, new BigDecimal("0.0"), "test3");
 
@@ -46,8 +56,8 @@ public class AccountDaoTest {
     }
 
     @Test
+    @DisplayName("Test for checking whether correctly saved account into storage")
     void saveTest() {
-        AccountDao accountDao = new AccountDao();
         UUID uuid = UUID.randomUUID();
         AccountEntity entity = new AccountEntity(uuid, new BigDecimal("0.0"), "test4");
 
@@ -57,8 +67,8 @@ public class AccountDaoTest {
     }
 
     @Test
+    @DisplayName("Test for checking correctly or not updated balance on account")
     void updateBalanceTest() {
-        AccountDao accountDao = new AccountDao();
         UUID uuid = UUID.randomUUID();
         AccountEntity entity = new AccountEntity(uuid, new BigDecimal("0.0"), "test5");
         accountDao.save(entity);
