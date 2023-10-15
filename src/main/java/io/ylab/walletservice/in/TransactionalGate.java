@@ -8,6 +8,7 @@ import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
 import io.ylab.walletservice.service.api.IAccountService;
 import io.ylab.walletservice.service.api.ITransactionService;
+import lombok.RequiredArgsConstructor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.util.UUID;
 /**
  * Class fo interaction between {@link ITransactionService} and {@link Menu}
  */
+@RequiredArgsConstructor
 public class TransactionalGate {
 
     /**
@@ -104,16 +106,6 @@ public class TransactionalGate {
      * define a field with a type {@link ITransactionService} for further aggregation
      */
     private final ITransactionService transactionService;
-
-    /**
-     * Used for passing an instance of a {@link IAccountService} and a {@link ITransactionService} from outside
-     * @param accountService passed to the constructor to establish Aggregation
-     * @param transactionService passed to the constructor to establish Aggregation
-     */
-    public TransactionalGate(IAccountService accountService, ITransactionService transactionService) {
-        this.accountService = accountService;
-        this.transactionService = transactionService;
-    }
 
     /**
      * Сarries out a debit or credit transaction

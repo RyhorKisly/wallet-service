@@ -4,12 +4,17 @@ import io.ylab.walletservice.core.enums.Operation;
 import io.ylab.walletservice.core.dto.AuditDTO;
 import io.ylab.walletservice.core.dto.UserDTO;
 import io.ylab.walletservice.dao.entity.AccountEntity;
+import lombok.RequiredArgsConstructor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+/**
+ * Menu class. With this class begin program in console
+ */
+@RequiredArgsConstructor
 public class Menu {
 
     /**
@@ -67,24 +72,6 @@ public class Menu {
      * define a field with a type {@link AuditGate} for further aggregation
      */
     private final AuditGate auditGate;
-    /**
-     * Constructor initialize the Class AuthenticationGate
-     *
-     * @param  authenticationGate for initialization of the Class AuthenticationGate
-     * @param  transactionalGate for initialization of the Class TransactionalGate
-     * @param  accountGate for initialization of the Class AccountGate
-     */
-    public Menu(
-            AuthenticationGate authenticationGate,
-            TransactionalGate transactionalGate,
-            AccountGate accountGate,
-            AuditGate auditGate
-    ) {
-        this.authenticationGate = authenticationGate;
-        this.transactionalGate = transactionalGate;
-        this.accountGate = accountGate;
-        this.auditGate = auditGate;
-    }
 
     /**
      * With this method our app start.

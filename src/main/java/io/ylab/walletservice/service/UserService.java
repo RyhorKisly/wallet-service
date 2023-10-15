@@ -4,14 +4,14 @@ import io.ylab.walletservice.core.dto.UserCreateDTO;
 import io.ylab.walletservice.dao.api.IUserDao;
 import io.ylab.walletservice.dao.entity.UserEntity;
 import io.ylab.walletservice.service.api.IUserService;
-
-import java.io.BufferedReader;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Class for generic operations on a service for an Account.
  * Interact with {@link IUserDao}
  * This an implementation of {@link IUserService}
  */
+@RequiredArgsConstructor
 public class UserService implements IUserService {
 
     /**
@@ -23,14 +23,6 @@ public class UserService implements IUserService {
      * define a field with a type {@link IUserDao} for further aggregation
      */
     private final IUserDao userDao;
-
-    /**
-     * Constructor initialize the Class UserService
-     * @param userDao for initialization of the Class IUserDao
-     */
-    public UserService(IUserDao userDao) {
-        this.userDao = userDao;
-    }
 
     /**
      * Create entity.

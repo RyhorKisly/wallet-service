@@ -5,6 +5,7 @@ import io.ylab.walletservice.dao.api.IAccountDao;
 import io.ylab.walletservice.dao.api.IAuditDao;
 import io.ylab.walletservice.dao.entity.AuditEntity;
 import io.ylab.walletservice.service.api.IAuditService;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -15,20 +16,13 @@ import java.util.UUID;
  * Interact with {@link IAccountDao ,} and {@link IAuditService}
  * This an implementation of {@link IAuditService}
  */
+@RequiredArgsConstructor
 public class AuditService implements IAuditService {
 
     /**
      * define a field with a type {@link IAuditDao} for further aggregation
      */
     private final IAuditDao auditDao;
-
-    /**
-     * Constructor initialize the Class AuditService
-     * @param auditDao for initialization of the Class IAuditDao
-     */
-    public AuditService(IAuditDao auditDao) {
-        this.auditDao = auditDao;
-    }
 
     /**
      * get set of entities by login of the user

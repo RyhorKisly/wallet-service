@@ -8,6 +8,7 @@ import io.ylab.walletservice.dao.api.IAccountDao;
 import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.service.api.IAccountService;
 import io.ylab.walletservice.service.api.IAuditService;
+import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -17,6 +18,7 @@ import java.util.UUID;
  * Interact with {@link IAccountDao} and {@link IAuditService}
  * This an implementation of {@link IAccountService}
  */
+@RequiredArgsConstructor
 public class AccountService implements IAccountService {
 
     /**
@@ -33,19 +35,6 @@ public class AccountService implements IAccountService {
      * define a field with a type {@link IAuditService} for further aggregation
      */
     private final IAuditService auditService;
-
-    /**
-     * Constructor initialize the Class AccountService
-     * @param accountDao for initialization of the Class IAccountDao
-     * @param auditService for initialization of the Class IAuditService
-     */
-    public AccountService(
-            IAccountDao accountDao,
-            IAuditService auditService
-    ) {
-        this.accountDao = accountDao;
-        this.auditService = auditService;
-    }
 
     /**
      * Create entity.

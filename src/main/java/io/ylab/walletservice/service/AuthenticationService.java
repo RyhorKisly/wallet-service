@@ -10,6 +10,7 @@ import io.ylab.walletservice.service.api.IAccountService;
 import io.ylab.walletservice.service.api.IAuditService;
 import io.ylab.walletservice.service.api.IUserAuthenticationService;
 import io.ylab.walletservice.service.api.IUserService;
+import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -19,6 +20,7 @@ import java.util.UUID;
  * Interact with {@link IUserService}, {@link IAccountDao ,} and {@link IAuditService}
  * This an implementation of {@link IUserAuthenticationService}
  */
+@RequiredArgsConstructor
 public class AuthenticationService implements IUserAuthenticationService {
 
     /**
@@ -50,23 +52,6 @@ public class AuthenticationService implements IUserAuthenticationService {
      * define a field with a type {@link IAuditService} for further aggregation
      */
     private final IAuditService auditService;
-
-    /**
-     * Constructor initialize the Class AuthenticationService
-     * @param userService for initialization of the Class IUserService
-     * @param accountService for initialization of the Class IAccountService
-     * @param auditService for initialization of the Class IAuditService
-     */
-    public AuthenticationService(
-            IUserService userService,
-            IAccountService accountService,
-            IAuditService auditService
-    ) {
-        this.userService = userService;
-        this.accountService = accountService;
-        this.auditService = auditService;
-
-    }
 
     /**
      * Used to create user by registration

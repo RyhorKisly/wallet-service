@@ -6,6 +6,7 @@ import io.ylab.walletservice.core.dto.UserDTO;
 import io.ylab.walletservice.core.dto.UserLoginDTO;
 import io.ylab.walletservice.dao.entity.UserEntity;
 import io.ylab.walletservice.service.api.IUserAuthenticationService;
+import lombok.RequiredArgsConstructor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.io.IOException;
 /**
  * Class fo interaction between {@link IUserAuthenticationService} and {@link Menu}
  */
+@RequiredArgsConstructor
 public class AuthenticationGate {
 
     /**
@@ -64,14 +66,6 @@ public class AuthenticationGate {
      * define a field with a type {@link IUserAuthenticationService} for further aggregation
      */
     private final IUserAuthenticationService authenticationService;
-
-    /**
-     * Used for passing an instance of a {@link IUserAuthenticationService} from outside
-     * @param authenticationService passed to the constructor to establish Aggregation
-     */
-    public AuthenticationGate(IUserAuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
 
     /**
      * Register user in the system. User enter login and password and after that

@@ -8,6 +8,7 @@ import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
 import io.ylab.walletservice.service.api.IAuditService;
 import io.ylab.walletservice.service.api.ITransactionService;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -17,6 +18,7 @@ import java.util.Set;
  * Interact with {@link ITransactionDao} and {@link IAuditService}
  * This an implementation of {@link ITransactionService}
  */
+@RequiredArgsConstructor
 public class TransactionService implements ITransactionService {
 
     /**
@@ -38,19 +40,6 @@ public class TransactionService implements ITransactionService {
      * define a field with a type {@link IAuditService} for further aggregation
      */
     private final IAuditService auditService;
-
-    /**
-     * Constructor initialize the Class TransactionService
-     * @param transactionDao for initialization of the Class ITransactionDao
-     * @param auditService for initialization of the Class IAuditService
-     */
-    public TransactionService(
-            ITransactionDao transactionDao,
-            IAuditService auditService
-    ) {
-        this.transactionDao = transactionDao;
-        this.auditService = auditService;
-    }
 
     /**
      * Create entity.
