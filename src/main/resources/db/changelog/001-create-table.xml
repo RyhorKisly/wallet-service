@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="001" author="GrigoriyKislyi">
+        <sql>
+            CREATE SCHEMA IF NOT EXISTS app;
+        </sql>
+
+
+        <createSequence sequenceName="User_id_seq"
+                        schemaName="app"
+                        incrementBy="1"
+                        startValue="1"
+                        minValue="1"
+                        maxValue="9223372036854775807"/>
+        <createTable tableName="User"
+                     schemaName="app">
+            <column name="id" type="bigint" defaultValueSequenceNext="User_id_seq">
+                <constraints primaryKey="true"
+                             primaryKeyName="User_pkey"
+                             nullable="false"/>
+            </column>
+            <column name="login" type="text">
+                <constraints unique="true"
+                             uniqueConstraintName="user_login_unique"
+                             nullable="false"/>
+            </column>
+            <column name="password" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+
+        <createSequence sequenceName="Audit_id_seq"
+                        schemaName="app"
+                        incrementBy="1"
+                        startValue="1"
+                        minValue="1"
+                        maxValue="9223372036854775807"/>
+
+        <createTable tableName="Audit"
+                     schemaName="app">
+
+            <column name="id" type="bigint" defaultValueSequenceNext="Audit_id_seq">
+                <constraints primaryKey="true"
+                             primaryKeyName="Audit_pkey"
+                             nullable="false"/>
+            </column>
+            <column name="dt_create" type="timestamp without time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="text" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint  baseColumnNames="user_id"
+                                  baseTableName="Audit"
+                                  baseTableSchemaName="app"
+                                  constraintName="audit_user_id_fkey"
+                                  onDelete="NO ACTION"
+                                  onUpdate="NO ACTION"
+                                  referencedColumnNames="id"
+                                  referencedTableName="User"
+                                  referencedTableSchemaName="app"/>
+
+
+        <createSequence sequenceName="Account_id_seq"
+                        schemaName="app"
+                        incrementBy="1"
+                        startValue="1"
+                        minValue="1"
+                        maxValue="9223372036854775807"/>
+
+        <createTable tableName="Account"
+                     schemaName="app">
+            <column name="id" type="bigint" defaultValueSequenceNext="Account_id_seq">
+                <constraints primaryKey="true"
+                             primaryKeyName="Account_pkey"
+                             nullable="false"/>
+            </column>
+            <column name="balance" type="numeric">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints unique="true"
+                             uniqueConstraintName="account_user_id_unique"
+                             nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint  baseColumnNames="user_id"
+                                  baseTableName="Account"
+                                  baseTableSchemaName="app"
+                                  constraintName="account_user_id_fkey"
+                                  onDelete="NO ACTION"
+                                  onUpdate="NO ACTION"
+                                  referencedColumnNames="id"
+                                  referencedTableName="User"
+                                  referencedTableSchemaName="app"/>
+
+
+        <createTable tableName="Transaction"
+                     schemaName="app">
+            <column name="id" type="text">
+                <constraints primaryKey="true"
+                             primaryKeyName="Transaction_pkey"
+                             nullable="false"/>
+            </column>
+            <column name="operation" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sum_of_transaction" type="numeric">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dt_create" type="timestamp without time zone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint  baseColumnNames="account_id"
+                                  baseTableName="Transaction"
+                                  baseTableSchemaName="app"
+                                  constraintName="transaction_account_id_fkey"
+                                  onDelete="NO ACTION"
+                                  onUpdate="NO ACTION"
+                                  referencedColumnNames="id"
+                                  referencedTableName="Account"
+                                  referencedTableSchemaName="app"/>
+        </changeSet>
+</databaseChangeLog>
