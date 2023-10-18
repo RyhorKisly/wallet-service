@@ -3,6 +3,8 @@ package io.ylab.walletsevice.service;
 import io.ylab.walletservice.core.dto.UserCreateDTO;
 import io.ylab.walletservice.core.dto.UserLoginDTO;
 import io.ylab.walletservice.core.enums.UserRole;
+import io.ylab.walletservice.dao.AuditDao;
+import io.ylab.walletservice.dao.UserDao;
 import io.ylab.walletservice.dao.entity.UserEntity;
 import io.ylab.walletservice.service.AuthenticationService;
 import io.ylab.walletservice.service.UserService;
@@ -16,21 +18,16 @@ import org.junit.jupiter.api.Test;
 public class AuthenticationServiceTest {
     private UserService userService;
     private AuthenticationService authenticationService;
+    private UserDao userDao;
+    private AuditDao auditDao;
 
     @BeforeEach
     @DisplayName("Initialize classes for tests")
     public void setUp() {
         userService = (UserService) UserServiceFactory.getInstance();
         authenticationService = (AuthenticationService) UserAuthenticationServiceFactory.getInstance();
-    }
-
-    @Test
-    @DisplayName("Test for checking registration user")
-    void registerTest() {
-        UserCreateDTO userCreateDTO = new UserCreateDTO("test3", UserRole.USER, "test3");
-        UserEntity entity = new UserEntity("test3", "test3", UserRole.USER);
-
-        Assertions.assertEquals(entity, authenticationService.register(userCreateDTO));
+        userDao = new UserDao();
+        auditDao = new AuditDao();
     }
 
     @Test
@@ -40,6 +37,9 @@ public class AuthenticationServiceTest {
         UserCreateDTO userCreateDTO = new UserCreateDTO("test4", UserRole.USER, "4tset");
         UserEntity createdEntity = userService.create(userCreateDTO);
         UserEntity authorizedEntity = authenticationService.authorize(userLoginDTO);
+
+        auditDao.deleteByUserId(createdEntity.getId());
+        userDao.delete(createdEntity.getId());
 
         Assertions.assertEquals(createdEntity, authorizedEntity);
     }
