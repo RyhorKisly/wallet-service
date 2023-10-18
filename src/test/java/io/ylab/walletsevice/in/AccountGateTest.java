@@ -1,8 +1,8 @@
 package io.ylab.walletsevice.in;
 
+import io.ylab.walletservice.dao.UserDao;
 import io.ylab.walletservice.dao.entity.AccountEntity;
-import io.ylab.walletservice.dao.memory.AccountDao;
-import io.ylab.walletservice.dao.memory.factory.AccountDaoFactory;
+import io.ylab.walletservice.dao.entity.UserEntity;
 import io.ylab.walletservice.in.AccountGate;
 import io.ylab.walletservice.service.factory.AccountServiceFactory;
 import org.junit.jupiter.api.Assertions;
@@ -10,29 +10,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
-import java.util.UUID;
-
 public class AccountGateTest {
     private AccountGate accountGate;
-    private AccountDao accountDao;
+    private UserDao userDao;
 
     @BeforeEach
     @DisplayName("Initialize classes for tests")
     public void setUp() {
         accountGate = new AccountGate(AccountServiceFactory.getInstance());
-        accountDao = (AccountDao) AccountDaoFactory.getInstance();
+        userDao = new UserDao();
     }
 
     @Test
     @DisplayName("Test for getting account by login")
     void getAccountTest() {
-        UUID uuid = UUID.randomUUID();
-        AccountEntity entity = new AccountEntity(uuid, new BigDecimal("0.0"), "test24");
-        accountDao.save(entity);
+        UserEntity userEntity = userDao.find("admin");
+        AccountEntity foundAccountEntity = accountGate.getAccount("admin");
 
-        AccountEntity entityCreated = accountGate.getAccount(entity.getLogin());
-
-        Assertions.assertEquals(entity, entityCreated);
+        Assertions.assertEquals(userEntity.getId(), foundAccountEntity.getUserId());
     }
 }

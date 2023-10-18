@@ -28,6 +28,11 @@ public class AuthenticationGate {
     private static final String REGISTERED_SUCCESS = "You have successfully registered.";
 
     /**
+     * Print if user fail registration
+     */
+    private static final String REGISTERED_FAIL = "Fail registration.";
+
+    /**
      * Print that user have to enter param or enter stop
      */
     private static final String ENTER_PARAM = "Enter %s or enter \"stop\" to stop program: ";
@@ -81,7 +86,11 @@ public class AuthenticationGate {
                 UserRole.USER,
                 password.reverse().toString()
         );
-        authenticationService.register(userCreateDTO);
+        UserEntity userEntity = authenticationService.register(userCreateDTO);
+        if(userEntity.getId() == null) {
+            System.out.println(REGISTERED_FAIL);
+            return;
+        }
         System.out.println(REGISTERED_SUCCESS);
     }
 
@@ -144,6 +153,7 @@ public class AuthenticationGate {
      */
     private UserDTO convertToDTO(UserEntity userEntity) {
         UserDTO userDTO = new UserDTO();
+        userDTO.setId(userEntity.getId());
         userDTO.setLogin(userEntity.getLogin());
         userDTO.setUserRole(userEntity.getRole());
         return userDTO;

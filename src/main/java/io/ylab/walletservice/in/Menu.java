@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.UUID;
 
 /**
  * Menu class. With this class begin program in console
@@ -80,17 +79,14 @@ public class Menu {
     public  void start(BufferedReader reader) {
         while (true) {
             switch (orderMainMenu(reader)) {
-                case 1:
-                    authenticationGate.register(reader);
-                    break;
-                case 2:
+                case 1 -> authenticationGate.register(reader);
+                case 2 -> {
                     UserDTO userDTO = authenticationGate.authorize(reader);
-                    if(userDTO != null) {
+                    if (userDTO != null) {
                         startAuthorizedMenu(reader, userDTO);
                     }
-                    break;
-                case 3: System.exit(0);
-                    break;
+                }
+                case 3 -> System.exit(0);
             }
         }
     }
@@ -103,20 +99,12 @@ public class Menu {
     private void startAuthorizedMenu(BufferedReader reader, UserDTO userDTO) {
         while (true) {
             switch (orderAuthorizedMenu(reader, userDTO)) {
-                case 1 -> {
-                    transactionalGate.creditDebitTransaction(reader, userDTO, Operation.CREDIT);
-                }
-                case 2 -> {
-                    transactionalGate.creditDebitTransaction(reader, userDTO, Operation.DEBIT);
-                }
-                case 3 -> {
-                    transactionalGate.getTransactionsHistory(userDTO, accountGate.getAccount(userDTO.getLogin()));
-                }
-                case 4 -> {
-                    auditGate.getUserAudit(userDTO.getLogin());
-                }
+                case 1 -> transactionalGate.creditDebitTransaction(reader, userDTO, Operation.CREDIT);
+                case 2 -> transactionalGate.creditDebitTransaction(reader, userDTO, Operation.DEBIT);
+                case 3 -> transactionalGate.getTransactionsHistory(userDTO, accountGate.getAccount(userDTO.getLogin()));
+                case 4 -> auditGate.getUserAudit(userDTO.getLogin());
                 case 5 -> {
-                    AuditDTO auditDTO = new AuditDTO(userDTO.getLogin(), "User logged out");
+                    AuditDTO auditDTO = new AuditDTO(userDTO.getId(), "User logged out");
                     auditGate.create(auditDTO);
                     return;
                 }
@@ -157,7 +145,7 @@ public class Menu {
      */
     private int orderAuthorizedMenu(BufferedReader reader, UserDTO userDTO) {
         AccountEntity accountEntity = accountGate.getAccount(userDTO.getLogin());
-        UUID numberAccount = accountEntity.getNumberAccount();
+        Long numberAccount = accountEntity.getId();
         BigDecimal balance = accountEntity.getBalance();
 
         System.out.printf((USER_MENU) + "%n", userDTO.getLogin(), numberAccount, balance);
