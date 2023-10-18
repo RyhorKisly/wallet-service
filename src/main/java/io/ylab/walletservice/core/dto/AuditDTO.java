@@ -15,7 +15,7 @@ public class AuditDTO {
     /**
      * Identifies that the account belongs to a specific user.
      */
-    private String userLogin;
+    private Long userId;
 
     /**
      * Message where we write specific action performed by the user.

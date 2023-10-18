@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 /**
  * Transfer account data for transfer to a storage location
@@ -18,7 +17,7 @@ public class AccountDTO {
     /**
      * Used like ID of account in order to save in storage place and show in menu.
      */
-    private UUID numberAccount;
+    private Long numberAccount;
 
     /**
      * Current account balance. Used for transfer the original balance value to the storage place.

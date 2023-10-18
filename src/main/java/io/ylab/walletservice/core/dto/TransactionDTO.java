@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 /**
  * Transfer transaction data for transfer to a storage location
@@ -35,5 +34,5 @@ public class TransactionDTO {
     /**
      * number of account. Used to specify transaction for account.
      */
-    private UUID numberAccount;
+    private Long numberAccount;
 }

@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 /**
  * Transfer user data for transfer to a storage location
  */
@@ -19,7 +17,7 @@ public class UserDTO {
      * Used like ID of transaction in order to save in storage place.
      * should be uniq and not be empty
      */
-    private UUID uuid;
+    private Long id;
 
     /**
      * Identifies that the account belongs to a specific user. Used for log in.
