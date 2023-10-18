@@ -1,0 +1,22 @@
+package io.ylab.walletservice.core.utils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+public class PropertiesLoader {
+    public static Properties loadProperties() {
+        try {
+
+        Properties configuration = new Properties();
+        InputStream inputStream = PropertiesLoader.class
+                .getClassLoader()
+                .getResourceAsStream("application.properties");
+            configuration.load(inputStream);
+        inputStream.close();
+        return configuration;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
