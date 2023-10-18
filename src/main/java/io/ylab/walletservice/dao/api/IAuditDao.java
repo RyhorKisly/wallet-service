@@ -24,4 +24,16 @@ public interface IAuditDao {
      * @return the saved entity
      */
     AuditEntity save(AuditEntity auditEntity);
+
+    /**
+     * Method just for testing method save()
+     * @param id for finding and deleting audit
+     */
+    void delete(Long id);
+
+    /**
+     * Method just for testing
+     * @param userId for finding and deleting audit
+     */
+    void deleteByUserId(Long userId);
 }

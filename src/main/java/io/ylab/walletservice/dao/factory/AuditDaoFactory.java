@@ -1,7 +1,7 @@
-package io.ylab.walletservice.dao.memory.factory;
+package io.ylab.walletservice.dao.factory;
 
 import io.ylab.walletservice.dao.api.IAuditDao;
-import io.ylab.walletservice.dao.memory.AuditDao;
+import io.ylab.walletservice.dao.AuditDao;
 
 /**
  * Class implementing the singleton pattern for AuditDao

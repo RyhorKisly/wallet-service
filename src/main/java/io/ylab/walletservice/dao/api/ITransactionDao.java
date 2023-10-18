@@ -3,7 +3,6 @@ package io.ylab.walletservice.dao.api;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
 
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Interface for generic operations on a repository for Transactions.
@@ -38,5 +37,11 @@ public interface ITransactionDao {
      * @param numberAccount find entity by number of an account
      * @return set of entities from storage
      */
-    Set<TransactionEntity> findAllByNumberAccountAscByDTCreate(UUID numberAccount);
+    Set<TransactionEntity> findAllByNumberAccountAscByDTCreate(Long numberAccount);
+
+    /**
+     * Method just for testing method save()
+     * @param TransactionId for finding and deleting transaction
+     */
+    void delete(String TransactionId);
 }

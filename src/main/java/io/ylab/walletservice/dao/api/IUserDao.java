@@ -22,4 +22,10 @@ public interface IUserDao {
      * @return the saved entity
      */
     UserEntity save(UserEntity entity);
+
+    /**
+     * Method just for testing method save()
+     * @param id for finding and deleting user
+     */
+    void delete(Long id);
 }

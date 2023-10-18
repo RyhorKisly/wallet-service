@@ -1,7 +1,7 @@
-package io.ylab.walletservice.dao.memory.factory;
+package io.ylab.walletservice.dao.factory;
 
 import io.ylab.walletservice.dao.api.IUserDao;
-import io.ylab.walletservice.dao.memory.UserDao;
+import io.ylab.walletservice.dao.UserDao;
 
 /**
  * Class implementing the singleton pattern for UserDao
