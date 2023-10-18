@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  * Stored business logic object. Used to save, retrieve and update state to a storage location
@@ -35,7 +34,7 @@ public class TransactionEntity {
     /**
      * number of account. Used to specify transaction for account.
      */
-    private UUID numberAccount;
+    private Long accountId;
 
     /**
      * Class instance creation time

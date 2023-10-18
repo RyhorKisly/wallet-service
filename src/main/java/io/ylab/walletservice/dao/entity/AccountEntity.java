@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 /**
  * Stored business logic object. Used to save, retrieve and update state to a storage location
@@ -18,7 +17,7 @@ public class AccountEntity {
     /**
      * Used like ID of an account. Should be unique
      */
-    private UUID numberAccount;
+    private Long id;
 
     /**
      * Current account balance.
@@ -28,6 +27,6 @@ public class AccountEntity {
     /**
      * Identifies that the account belongs to a specific user.
      */
-    private String login;
+    private Long userId;
 
 }

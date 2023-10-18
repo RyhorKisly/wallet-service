@@ -16,6 +16,11 @@ public class UserEntity {
     /**
      * Identifies that the account belongs to a specific user.
      */
+    private Long id;
+
+    /**
+     * Identifies that the account belongs to a specific user.
+     */
     private String login;
 
     /**
