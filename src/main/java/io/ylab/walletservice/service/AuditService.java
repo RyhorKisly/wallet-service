@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Class for generic operations on a service for an Audit.
@@ -42,12 +41,10 @@ public class AuditService implements IAuditService {
      */
     @Override
     public AuditEntity create(AuditDTO auditDTO) {
-        AuditEntity auditEntity = new AuditEntity(
-                UUID.randomUUID(),
-                LocalDateTime.now(),
-                auditDTO.getUserLogin(),
-                auditDTO.getText()
-        );
+        AuditEntity auditEntity = new AuditEntity();
+        auditEntity.setDtCreate(LocalDateTime.now());
+        auditEntity.setUserId(auditDTO.getUserId());
+        auditEntity.setText(auditDTO.getText());
         return auditDao.save(auditEntity);
     }
 }

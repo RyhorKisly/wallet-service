@@ -1,5 +1,6 @@
 package io.ylab.walletservice.service;
 
+import io.ylab.walletservice.core.dto.UserDTO;
 import io.ylab.walletservice.core.enums.Operation;
 import io.ylab.walletservice.core.dto.AuditDTO;
 import io.ylab.walletservice.core.dto.TransactionDTO;
@@ -46,11 +47,11 @@ public class TransactionService implements ITransactionService {
      * Use the returned instance for further operations as the save operation.
      * Save action in audit.
      * @param dto used for creating entity
-     * @param login used for creating entity
+     * @param userId used for creating entity
      * @return created entity
      */
     @Override
-    public TransactionEntity create(TransactionDTO dto, String login) {
+    public TransactionEntity create(TransactionDTO dto, Long userId) {
         TransactionEntity entity = new TransactionEntity(
                 dto.getTransactionId(),
                 dto.getOperation(),
@@ -61,7 +62,7 @@ public class TransactionService implements ITransactionService {
         for (Operation value : Operation.values()) {
             if(dto.getOperation().equals(value)) {
                 AuditDTO auditDTO = new AuditDTO(
-                        login, String.format(TRANSACTION_CREATED, dto.getOperation()));
+                userId, String.format(TRANSACTION_CREATED, dto.getOperation()));
                 auditService.create(auditDTO);
             }
         }
@@ -86,10 +87,10 @@ public class TransactionService implements ITransactionService {
     @Override
     public Set<TransactionEntity> get(AccountEntity entity) {
         Set<TransactionEntity> transactions =
-                transactionDao.findAllByNumberAccountAscByDTCreate(entity.getNumberAccount());
+                transactionDao.findAllByNumberAccountAscByDTCreate(entity.getId());
 
         AuditDTO auditDTO = new AuditDTO(
-                entity.getLogin(), REQUEST_HISTORY);
+                entity.getUserId(), REQUEST_HISTORY);
         auditService.create(auditDTO);
 
         return transactions;

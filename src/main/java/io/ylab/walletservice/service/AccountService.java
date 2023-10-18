@@ -6,12 +6,13 @@ import io.ylab.walletservice.core.dto.AuditDTO;
 import io.ylab.walletservice.core.dto.TransactionDTO;
 import io.ylab.walletservice.dao.api.IAccountDao;
 import io.ylab.walletservice.dao.entity.AccountEntity;
+import io.ylab.walletservice.dao.entity.UserEntity;
 import io.ylab.walletservice.service.api.IAccountService;
 import io.ylab.walletservice.service.api.IAuditService;
+import io.ylab.walletservice.service.api.IUserService;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 /**
  * Class for generic operations on a service for an Account.
@@ -35,6 +36,7 @@ public class AccountService implements IAccountService {
      * define a field with a type {@link IAuditService} for further aggregation
      */
     private final IAuditService auditService;
+    private final IUserService userService;
 
     /**
      * Create entity.
@@ -44,13 +46,13 @@ public class AccountService implements IAccountService {
      */
     @Override
     public AccountEntity create(AccountDTO accountDTO) {
-        AccountEntity entity = new AccountEntity(
-                accountDTO.getNumberAccount(),
-                new BigDecimal("0.0"),
-                accountDTO.getLogin()
-        );
+        UserEntity userEntity = userService.get(accountDTO.getLogin());
+        AccountEntity entity = new AccountEntity();
+        entity.setBalance(new BigDecimal("0.0"));
+        entity.setUserId(userEntity.getId());
+
         AccountEntity accountEntity = accountDao.save(entity);
-        AuditDTO auditDTO = new AuditDTO(accountEntity.getLogin(), ACCOUNT_CREATED);
+        AuditDTO auditDTO = new AuditDTO(accountEntity.getUserId(), ACCOUNT_CREATED);
         auditService.create(auditDTO);
         return accountEntity;
     }
@@ -61,7 +63,7 @@ public class AccountService implements IAccountService {
      * @return entity for farther interaction with app
      */
     @Override
-    public AccountEntity get(UUID numberAccount) {
+    public AccountEntity get(Long numberAccount) {
         return accountDao.find(numberAccount);
     }
 
@@ -72,8 +74,8 @@ public class AccountService implements IAccountService {
      * @return entity for farther interaction with app
      */
     @Override
-    public AccountEntity get(String numberAccount, String login) {
-        return accountDao.find(UUID.fromString(numberAccount), login);
+    public AccountEntity get(Long numberAccount, String login) {
+        return accountDao.find(numberAccount, login);
     }
 
     /**
@@ -96,7 +98,7 @@ public class AccountService implements IAccountService {
      * @return the updated entity
      */
     @Override
-    public AccountEntity updateBalance(UUID numberAccount, TransactionDTO transactionDTO) {
+    public AccountEntity updateBalance(Long numberAccount, TransactionDTO transactionDTO) {
         AccountEntity entity = accountDao.find(numberAccount);
         if(transactionDTO.getOperation().equals(Operation.CREDIT)) {
             entity.setBalance(entity.getBalance().add(transactionDTO.getSumOfTransaction()));

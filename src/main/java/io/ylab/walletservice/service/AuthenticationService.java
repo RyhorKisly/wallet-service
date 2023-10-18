@@ -13,7 +13,6 @@ import io.ylab.walletservice.service.api.IUserService;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 /**
  * Class for generic operations on a service for users authentication.
@@ -61,15 +60,18 @@ public class AuthenticationService implements IUserAuthenticationService {
      */
     @Override
     public UserEntity register(UserCreateDTO dto) {
-        AccountDTO accountDTO = new AccountDTO(
-                UUID.randomUUID(),
-                new BigDecimal("0.0"),
-                dto.getLogin()
-        );
-        accountService.create(accountDTO);
-        UserEntity userEntity = userService.create(dto);
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setBalance(new BigDecimal("0.0"));
+        accountDTO.setLogin(dto.getLogin());
 
-        AuditDTO auditDTO = new AuditDTO(userEntity.getLogin(), USER_REGISTERED);
+        UserEntity userEntity = userService.create(dto);
+        if(userEntity.getId() == null) {
+            return userEntity;
+        }
+
+        accountService.create(accountDTO);
+
+        AuditDTO auditDTO = new AuditDTO(userEntity.getId(), USER_REGISTERED);
         auditService.create(auditDTO);
 
         return userEntity;
@@ -89,7 +91,7 @@ public class AuthenticationService implements IUserAuthenticationService {
                 System.out.println(WRONG_DATES);
                 return null;
             } else {
-                AuditDTO auditDTO = new AuditDTO(userEntity.getLogin(), USER_SIGNED);
+                AuditDTO auditDTO = new AuditDTO(userEntity.getId(), USER_SIGNED);
                 auditService.create(auditDTO);
                 return userEntity;
             }

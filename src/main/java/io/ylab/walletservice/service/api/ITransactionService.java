@@ -1,6 +1,7 @@
 package io.ylab.walletservice.service.api;
 
 import io.ylab.walletservice.core.dto.TransactionDTO;
+import io.ylab.walletservice.core.dto.UserDTO;
 import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
 
@@ -15,10 +16,10 @@ public interface ITransactionService {
      * Create entity.
      * Use the returned instance for further operations as the save operation
      * @param transactionDTO used for creating entity
-     * @param login used for creating entity
+     * @param userId used for creating entity
      * @return created entity
      */
-    TransactionEntity create(TransactionDTO transactionDTO, String login);
+    TransactionEntity create(TransactionDTO transactionDTO, Long userId);
 
     /**
      * get entity by ID
