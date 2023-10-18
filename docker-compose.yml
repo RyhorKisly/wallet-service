@@ -1,0 +1,22 @@
+version: '3.1'
+
+services:
+
+  pg_db:
+    image: postgres:15.3-alpine3.18
+    restart: always
+    environment:
+      POSTGRES_DB: wallet_service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5433:5432
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.admin
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - 888:80
