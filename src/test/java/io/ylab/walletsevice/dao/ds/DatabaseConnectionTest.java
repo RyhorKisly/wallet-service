@@ -1,6 +1,6 @@
 package io.ylab.walletsevice.dao.ds;
 
-import io.ylab.walletservice.core.utils.PropertiesLoaderTest;
+import io.ylab.walletservice.core.conf.PropertiesLoaderTest;
 import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 import io.ylab.walletsevice.testcontainers.containers.PostgresTestContainer;
 
@@ -10,6 +10,10 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class DatabaseConnectionTest implements IConnectionWrapper {
+
+    /**
+     * Initialize class {@link Properties} for using properties from test.properties
+     */
     private static final Properties CONF = PropertiesLoaderTest.loadProperties();
 
     static {

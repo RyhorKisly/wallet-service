@@ -1,6 +1,6 @@
 package io.ylab.walletservice.dao.utils;
 
-import io.ylab.walletservice.core.utils.PropertiesLoader;
+import io.ylab.walletservice.core.conf.PropertiesLoader;
 import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 import liquibase.Liquibase;
 import liquibase.database.Database;
@@ -14,6 +14,10 @@ import java.util.Properties;
 
 @RequiredArgsConstructor
 public class LiquibaseManager {
+
+    /**
+     * Initialize class {@link Properties} for using properties from application.properties
+     */
     private static final Properties CONF = PropertiesLoader.loadProperties();
     private final IConnectionWrapper connection;
 

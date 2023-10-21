@@ -3,6 +3,8 @@ package io.ylab.walletsevice.dao;
 import io.ylab.walletservice.core.enums.UserRole;
 import io.ylab.walletservice.dao.AccountDao;
 import io.ylab.walletservice.dao.UserDao;
+import io.ylab.walletservice.dao.api.IAccountDao;
+import io.ylab.walletservice.dao.api.IUserDao;
 import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.entity.UserEntity;
 import io.ylab.walletsevice.dao.ds.factory.ConnectionWrapperFactoryTest;
@@ -16,12 +18,25 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DisplayName("Class for testing methods of the class AccountDao")
 public class AccountDaoTest extends ContainersEnvironment {
-    private AccountDao accountDao;
-    private UserDao userDao;
+
+    /**
+     * Define a field with a type {@link IAccountDao} for further use in the test
+     */
+    private IAccountDao accountDao;
+
+    /**
+     * Define a field with a type {@link IUserDao} for further use in the test
+     */
+    private IUserDao userDao;
+
+    /**
+     * Define a field with a type {@link ILiquibaseManagerTest} for further use in the test
+     */
     private ILiquibaseManagerTest liquibaseManagerTest;
-    @BeforeEach
-    @DisplayName("Initialize class for tests")
+    @BeforeAll
+    @DisplayName("Initialize classes for tests and call method for creating schema and tables in test db")
     public void setUp() {
         accountDao = new AccountDao(ConnectionWrapperFactoryTest.getInstance());
         userDao = new UserDao(ConnectionWrapperFactoryTest.getInstance());
@@ -30,7 +45,7 @@ public class AccountDaoTest extends ContainersEnvironment {
     }
 
     @AfterEach
-    @DisplayName("Migrates dates to drop schema and tables")
+    @DisplayName("Migrates data to drop data in table")
     public void drop() {
         this.liquibaseManagerTest.migrateDbDrop();
     }
@@ -40,7 +55,7 @@ public class AccountDaoTest extends ContainersEnvironment {
     void saveTest() {
         UserEntity userEntity = new UserEntity();
         userEntity.setLogin("Have never been created account test1");
-        userEntity.setPassword("1tset");
+        userEntity.setPassword("test");
         userEntity.setRole(UserRole.USER);
         UserEntity savedUserEntity = userDao.save(userEntity);
 
@@ -58,7 +73,7 @@ public class AccountDaoTest extends ContainersEnvironment {
     void saveUniqueLoginTest() {
         UserEntity userEntity = new UserEntity();
         userEntity.setLogin("Have never been created account test1");
-        userEntity.setPassword("1tset");
+        userEntity.setPassword("test");
         userEntity.setRole(UserRole.USER);
         UserEntity savedUserEntity = userDao.save(userEntity);
 
@@ -77,11 +92,11 @@ public class AccountDaoTest extends ContainersEnvironment {
     }
 
     @Test
-    @DisplayName("Test for finding account by id")
+    @DisplayName("Positive test for finding account by id")
     void findByIdTest() {
         UserEntity userEntity = new UserEntity();
         userEntity.setLogin("Have never been created account test1");
-        userEntity.setPassword("1tset");
+        userEntity.setPassword("test");
         userEntity.setRole(UserRole.USER);
         UserEntity savedEntity = userDao.save(userEntity);
 
@@ -101,11 +116,11 @@ public class AccountDaoTest extends ContainersEnvironment {
     }
 
     @Test
-    @DisplayName("Test for finding account by id and login")
+    @DisplayName("Positive test for finding account by id and login")
     void findByIdAndLoginTest() {
         UserEntity userEntity = new UserEntity();
         userEntity.setLogin("Have never been created account test1");
-        userEntity.setPassword("1tset");
+        userEntity.setPassword("test");
         userEntity.setRole(UserRole.USER);
         UserEntity savedEntity = userDao.save(userEntity);
 
@@ -125,11 +140,11 @@ public class AccountDaoTest extends ContainersEnvironment {
     }
 
     @Test
-    @DisplayName("Test for finding account by login")
+    @DisplayName("Positive test for finding account by login")
     void findByLoginTest() {
         UserEntity userEntity = new UserEntity();
         userEntity.setLogin("Have never been created account test1");
-        userEntity.setPassword("1tset");
+        userEntity.setPassword("test");
         userEntity.setRole(UserRole.USER);
         UserEntity savedEntity = userDao.save(userEntity);
 
