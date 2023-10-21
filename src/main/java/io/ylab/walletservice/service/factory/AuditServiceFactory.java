@@ -1,6 +1,6 @@
 package io.ylab.walletservice.service.factory;
 
-import io.ylab.walletservice.dao.memory.factory.AuditDaoFactory;
+import io.ylab.walletservice.dao.factory.AuditDaoFactory;
 import io.ylab.walletservice.service.AuditService;
 import io.ylab.walletservice.service.api.IAuditService;
 

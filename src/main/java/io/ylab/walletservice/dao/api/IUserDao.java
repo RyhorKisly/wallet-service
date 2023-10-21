@@ -22,4 +22,5 @@ public interface IUserDao {
      * @return the saved entity
      */
     UserEntity save(UserEntity entity);
+
 }

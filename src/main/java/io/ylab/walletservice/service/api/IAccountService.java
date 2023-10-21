@@ -5,8 +5,6 @@ import io.ylab.walletservice.core.dto.AccountDTO;
 import io.ylab.walletservice.core.dto.TransactionDTO;
 import io.ylab.walletservice.dao.entity.AccountEntity;
 
-import java.util.UUID;
-
 /**
  * Interface for generic operations on a service for an Account.
  */
@@ -25,7 +23,7 @@ public interface IAccountService {
      * @param numberAccount get entity by number of an account
      * @return entity for farther interaction with app
      */
-    AccountEntity get(UUID numberAccount);
+    AccountEntity get(Long numberAccount);
 
     /**
      * get entity by number of the account and login of the user
@@ -33,7 +31,7 @@ public interface IAccountService {
      * @param login get entity by user login
      * @return entity for farther interaction with app
      */
-    AccountEntity get(String numberAccount, String login);
+    AccountEntity get(Long numberAccount, String login);
 
     /**
      * get entity by number of the account and login of the user
@@ -49,6 +47,6 @@ public interface IAccountService {
      * @param transactionDTO used for checking can the operation be performed
      * @return the updated entity
      */
-    AccountEntity updateBalance(UUID numberAccount, TransactionDTO transactionDTO);
+    AccountEntity updateBalance(Long numberAccount, TransactionDTO transactionDTO);
 
 }

@@ -8,6 +8,7 @@ import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
 import io.ylab.walletservice.service.api.IAccountService;
 import io.ylab.walletservice.service.api.ITransactionService;
+import lombok.RequiredArgsConstructor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.util.UUID;
 /**
  * Class fo interaction between {@link ITransactionService} and {@link Menu}
  */
+@RequiredArgsConstructor
 public class TransactionalGate {
 
     /**
@@ -86,6 +88,11 @@ public class TransactionalGate {
     private static final String WRONG_DATA_FORMAT = "Wrong data format!";
 
     /**
+     * Print when you should enter transactionalId. Recommend to you better id.
+     */
+    private static final String RECOMMENDED_ID = "Recommended transactional identifier: ";
+
+    /**
      * Message should be entered if user want comeback to menu
      */
     private static final String BACK = "back";
@@ -106,17 +113,7 @@ public class TransactionalGate {
     private final ITransactionService transactionService;
 
     /**
-     * Used for passing an instance of a {@link IAccountService} and a {@link ITransactionService} from outside
-     * @param accountService passed to the constructor to establish Aggregation
-     * @param transactionService passed to the constructor to establish Aggregation
-     */
-    public TransactionalGate(IAccountService accountService, ITransactionService transactionService) {
-        this.accountService = accountService;
-        this.transactionService = transactionService;
-    }
-
-    /**
-     * Сarries out a debit or credit transaction
+     * Performs a debit or credit transaction
      * @param reader Reads text from a character-input stream
      * @param userDTO used to identify account
      * @param operation used to identify transaction (debit, credit)
@@ -133,11 +130,11 @@ public class TransactionalGate {
                 transactionID,
                 operation,
                 new BigDecimal(sumOfTransaction),
-                accountService.get(numberAccount, userDTO.getLogin()).getNumberAccount()
+                accountService.get(Long.parseLong(numberAccount), userDTO.getLogin()).getId()
         );
 
-        transactionService.create(transactionDTO, userDTO.getLogin());
-        AccountEntity accountEntity = accountService.updateBalance(UUID.fromString(numberAccount), transactionDTO);
+        transactionService.create(transactionDTO, userDTO.getId());
+        AccountEntity accountEntity = accountService.updateBalance(Long.parseLong(numberAccount), transactionDTO);
         if(accountEntity == null) {
             System.out.println(TRANSACTION_FAILED);
         } else {
@@ -176,6 +173,9 @@ public class TransactionalGate {
     private String enterParam(BufferedReader reader, String param, UserDTO userDTO) {
         while (true) {
                 try {
+                    if(param.equals(TRANSACTIONAL_IDENTIFIER)) {
+                        System.out.println(RECOMMENDED_ID + UUID.randomUUID());
+                    }
                     System.out.printf(ENTER_PARAM, param);
                     String inParam = reader.readLine();
                     if (inParam.equals(BACK)) {
@@ -230,8 +230,9 @@ public class TransactionalGate {
      * @return if correct accountNumber or exception
      */
     private String checkAccountNumber(String accountNumber, UserDTO userDTO) {
-        UUID.fromString(accountNumber);
-        if (accountService.get(accountNumber, userDTO.getLogin()) == null || accountNumber.isEmpty()) {
+            Long accountId = Long.parseLong(accountNumber);
+
+        if (accountService.get(accountId, userDTO.getLogin()) == null || accountNumber.isEmpty()) {
             throw new ExistOrEmptyAccountException();
         }
         return accountNumber;

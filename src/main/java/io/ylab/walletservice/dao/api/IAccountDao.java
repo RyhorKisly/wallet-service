@@ -3,8 +3,6 @@ package io.ylab.walletservice.dao.api;
 
 import io.ylab.walletservice.dao.entity.AccountEntity;
 
-import java.util.UUID;
-
 /**
  * Interface for generic operations on a repository for an Account.
  */
@@ -14,7 +12,7 @@ public interface IAccountDao {
      * @param numberAccount find entity by number of an account
      * @return entity from storage
      */
-    AccountEntity find(UUID numberAccount);
+    AccountEntity find(Long numberAccount);
 
     /**
      * find entity by number of the account and login of the user
@@ -22,7 +20,7 @@ public interface IAccountDao {
      * @param login find entity by user login
      * @return entity from storage
      */
-    AccountEntity find(UUID numberAccount, String login);
+    AccountEntity find(Long numberAccount, String login);
 
     /**
      * find entity by number of the account and login of the user
@@ -47,4 +45,5 @@ public interface IAccountDao {
      * @return the updated entity
      */
     AccountEntity updateBalance(AccountEntity entity);
+
 }

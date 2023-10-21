@@ -8,6 +8,7 @@ import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
 import io.ylab.walletservice.service.api.IAuditService;
 import io.ylab.walletservice.service.api.ITransactionService;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -17,6 +18,7 @@ import java.util.Set;
  * Interact with {@link ITransactionDao} and {@link IAuditService}
  * This an implementation of {@link ITransactionService}
  */
+@RequiredArgsConstructor
 public class TransactionService implements ITransactionService {
 
     /**
@@ -40,28 +42,15 @@ public class TransactionService implements ITransactionService {
     private final IAuditService auditService;
 
     /**
-     * Constructor initialize the Class TransactionService
-     * @param transactionDao for initialization of the Class ITransactionDao
-     * @param auditService for initialization of the Class IAuditService
-     */
-    public TransactionService(
-            ITransactionDao transactionDao,
-            IAuditService auditService
-    ) {
-        this.transactionDao = transactionDao;
-        this.auditService = auditService;
-    }
-
-    /**
      * Create entity.
      * Use the returned instance for further operations as the save operation.
      * Save action in audit.
      * @param dto used for creating entity
-     * @param login used for creating entity
+     * @param userId used for creating entity
      * @return created entity
      */
     @Override
-    public TransactionEntity create(TransactionDTO dto, String login) {
+    public TransactionEntity create(TransactionDTO dto, Long userId) {
         TransactionEntity entity = new TransactionEntity(
                 dto.getTransactionId(),
                 dto.getOperation(),
@@ -72,7 +61,7 @@ public class TransactionService implements ITransactionService {
         for (Operation value : Operation.values()) {
             if(dto.getOperation().equals(value)) {
                 AuditDTO auditDTO = new AuditDTO(
-                        login, String.format(TRANSACTION_CREATED, dto.getOperation()));
+                userId, String.format(TRANSACTION_CREATED, dto.getOperation()));
                 auditService.create(auditDTO);
             }
         }
@@ -97,10 +86,10 @@ public class TransactionService implements ITransactionService {
     @Override
     public Set<TransactionEntity> get(AccountEntity entity) {
         Set<TransactionEntity> transactions =
-                transactionDao.findAllByNumberAccountAscByDTCreate(entity.getNumberAccount());
+                transactionDao.findAllByNumberAccountAscByDTCreate(entity.getId());
 
         AuditDTO auditDTO = new AuditDTO(
-                entity.getLogin(), REQUEST_HISTORY);
+                entity.getUserId(), REQUEST_HISTORY);
         auditService.create(auditDTO);
 
         return transactions;

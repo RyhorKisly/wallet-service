@@ -3,12 +3,14 @@ package io.ylab.walletservice.in;
 import io.ylab.walletservice.core.dto.AuditDTO;
 import io.ylab.walletservice.dao.entity.AuditEntity;
 import io.ylab.walletservice.service.api.IAuditService;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Set;
 
 /**
  * Class fo interaction between {@link IAuditService} and {@link Menu}
  */
+@RequiredArgsConstructor
 public class AuditGate {
 
     /**
@@ -25,14 +27,6 @@ public class AuditGate {
      * define a field with a type {@link IAuditService} for further aggregation
      */
     private final IAuditService auditService;
-
-    /**
-     * Used for passing an instance of a {@link IAuditService} from outside
-     * @param auditService passed to the constructor to establish Aggregation
-     */
-    public AuditGate(IAuditService auditService) {
-        this.auditService = auditService;
-    }
 
     /**
      * Find set of entities by login of the user and print it in console.

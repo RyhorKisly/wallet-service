@@ -1,123 +1,171 @@
 package io.ylab.walletsevice.service;
 
-import io.ylab.walletservice.core.dto.AccountDTO;
 import io.ylab.walletservice.core.dto.TransactionDTO;
-import io.ylab.walletservice.core.dto.UserCreateDTO;
 import io.ylab.walletservice.core.enums.Operation;
 import io.ylab.walletservice.core.enums.UserRole;
+import io.ylab.walletservice.dao.AccountDao;
+import io.ylab.walletservice.dao.AuditDao;
+import io.ylab.walletservice.dao.TransactionDao;
+import io.ylab.walletservice.dao.UserDao;
 import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
-import io.ylab.walletservice.service.AccountService;
+import io.ylab.walletservice.dao.entity.UserEntity;
+import io.ylab.walletservice.service.AuditService;
 import io.ylab.walletservice.service.TransactionService;
-import io.ylab.walletservice.service.UserService;
-import io.ylab.walletservice.service.factory.AccountServiceFactory;
-import io.ylab.walletservice.service.factory.TransactionServiceFactory;
-import io.ylab.walletservice.service.factory.UserServiceFactory;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import io.ylab.walletsevice.dao.ds.factory.ConnectionWrapperFactoryTest;
+import io.ylab.walletsevice.dao.utils.api.ILiquibaseManagerTest;
+import io.ylab.walletsevice.dao.utils.factory.LiquibaseManagerTestFactory;
+import io.ylab.walletsevice.testcontainers.config.ContainersEnvironment;
+import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
-public class TransactionServiceTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class TransactionServiceTest extends ContainersEnvironment {
+    private UserDao userDao;
+    private AccountDao accountDao;
+    private TransactionDao transactionDao;
     private TransactionService transactionService;
-    private UserService userService;
-    private AccountService accountService;
+    private ILiquibaseManagerTest liquibaseManagerTest;
 
-    @BeforeEach
+    @BeforeAll
     @DisplayName("Initialize classes for tests")
     public void setUp() {
-        transactionService = (TransactionService) TransactionServiceFactory.getInstance();
-        userService = (UserService) UserServiceFactory.getInstance();
-        accountService = (AccountService) AccountServiceFactory.getInstance();
+        userDao = new UserDao(ConnectionWrapperFactoryTest.getInstance());
+        accountDao = new AccountDao(ConnectionWrapperFactoryTest.getInstance());
+        transactionDao = new TransactionDao(ConnectionWrapperFactoryTest.getInstance());
+        AuditDao auditDao = new AuditDao(ConnectionWrapperFactoryTest.getInstance());
+        AuditService auditService = new AuditService(auditDao);
+        transactionService = new TransactionService(transactionDao, auditService);
+
+        liquibaseManagerTest = LiquibaseManagerTestFactory.getInstance();
+        liquibaseManagerTest.migrateDbCreate();
+    }
+
+    @AfterEach
+    @DisplayName("Migrates dates to drop schema and tables")
+    public void drop() {
+        this.liquibaseManagerTest.migrateDbDrop();
     }
 
     @Test
     @DisplayName("Test for creating transaction")
     void createTest() {
-        UserCreateDTO userCreateDTO = new UserCreateDTO("test20", UserRole.USER, "02tset");
-        userService.create(userCreateDTO);
+        UserEntity userEntity = new UserEntity();
+        userEntity.setLogin("Have never been created transaction CreateTestAudit");
+        userEntity.setPassword("1tset");
+        userEntity.setRole(UserRole.USER);
+        UserEntity savedUserEntity = userDao.save(userEntity);
 
-        UUID uuid = UUID.randomUUID();
-        AccountDTO accountDTO = new AccountDTO(uuid, new BigDecimal("0.0"), "test20");
-        accountService.create(accountDTO);
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setUserId(savedUserEntity.getId());
+        accountEntity.setBalance(new BigDecimal("0.0"));
+        AccountEntity savedAccountEntity = accountDao.save(accountEntity);
 
         TransactionDTO transactionDTO = new TransactionDTO(
-                "zxc", Operation.CREDIT,
-                new BigDecimal("3.3"), uuid);
-        TransactionEntity transactionEntity = transactionService.create(transactionDTO, userCreateDTO.getLogin());
+                UUID.randomUUID().toString(),
+                Operation.CREDIT,
+                new BigDecimal("3.3"),
+                savedAccountEntity.getId());
+        TransactionEntity transactionEntity = transactionService.create(transactionDTO, savedUserEntity.getId());
 
         Assertions.assertEquals(transactionDTO.getTransactionId(), transactionEntity.getTransactionId());
         Assertions.assertEquals(transactionDTO.getSumOfTransaction(), transactionEntity.getSumOfTransaction());
         Assertions.assertEquals(transactionDTO.getOperation(), transactionEntity.getOperation());
-        Assertions.assertEquals(transactionDTO.getNumberAccount(), transactionEntity.getNumberAccount());
+        Assertions.assertEquals(transactionDTO.getNumberAccount(), transactionEntity.getAccountId());
     }
 
     @Test
     @DisplayName("Test for getting transaction by id")
     void getById() {
-        UserCreateDTO userCreateDTO = new UserCreateDTO("test21", UserRole.USER, "12tset");
-        userService.create(userCreateDTO);
+        UserEntity userEntity = new UserEntity();
+        userEntity.setLogin("Have never been created transaction CreateTestAudit");
+        userEntity.setPassword("1tset");
+        userEntity.setRole(UserRole.USER);
+        UserEntity savedUserEntity = userDao.save(userEntity);
 
-        UUID uuid = UUID.randomUUID();
-        AccountDTO accountDTO = new AccountDTO(uuid, new BigDecimal("0.0"), "test21");
-        accountService.create(accountDTO);
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setUserId(savedUserEntity.getId());
+        accountEntity.setBalance(new BigDecimal("0.0"));
+        AccountEntity savedAccountEntity = accountDao.save(accountEntity);
 
         TransactionDTO transactionDTO = new TransactionDTO(
-                "zxcv", Operation.CREDIT,
-                new BigDecimal("3.4"), uuid);
-        TransactionEntity createdEntity = transactionService.create(transactionDTO, userCreateDTO.getLogin());
+                UUID.randomUUID().toString(),
+                Operation.CREDIT,
+                new BigDecimal("3.3"),
+                savedAccountEntity.getId());
 
-        Assertions.assertEquals(createdEntity, transactionService.get(createdEntity.getTransactionId()));
+        TransactionEntity createdEntity = transactionService.create(transactionDTO, savedUserEntity.getId());
+        TransactionEntity foundEntity = transactionService.get(createdEntity.getTransactionId());
+
+        Assertions.assertEquals(createdEntity, foundEntity);
     }
 
     @Test
-    @DisplayName("Test for getting transaction by account entity")
-    void getByAccountEntity() {
-        UserCreateDTO userCreateDTO = new UserCreateDTO("test22", UserRole.USER, "22tset");
-        userService.create(userCreateDTO);
+    @DisplayName("Test for getting transactions by account entity")
+    void getAllByAccountEntity() {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setLogin("Have never been created transaction CreateTestAudit");
+        userEntity.setPassword("1tset");
+        userEntity.setRole(UserRole.USER);
+        UserEntity savedUserEntity = userDao.save(userEntity);
 
-        UUID uuid = UUID.randomUUID();
-        AccountDTO accountDTO = new AccountDTO(uuid, new BigDecimal("0.0"), "test22");
-        AccountEntity accountEntity = accountService.create(accountDTO);
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setUserId(savedUserEntity.getId());
+        accountEntity.setBalance(new BigDecimal("0.0"));
+        AccountEntity savedAccountEntity = accountDao.save(accountEntity);
 
         TransactionDTO transactionDTO1 = new TransactionDTO(
-                "zxcvb", Operation.CREDIT,
-                new BigDecimal("3.4"), uuid);
+                UUID.randomUUID().toString(),
+                Operation.CREDIT,
+                new BigDecimal("3.3"),
+                savedAccountEntity.getId());
         TransactionDTO transactionDTO2 = new TransactionDTO(
-                "zxcvbn", Operation.CREDIT,
-                new BigDecimal("3.4"), uuid);
-        TransactionEntity createdEntity1 = transactionService.create(transactionDTO1, userCreateDTO.getLogin());
-        TransactionEntity createdEntity2 = transactionService.create(transactionDTO2, userCreateDTO.getLogin());
+                UUID.randomUUID().toString(),
+                Operation.CREDIT,
+                new BigDecimal("3.3"),
+                savedAccountEntity.getId());
+
+        TransactionEntity createdEntity1 = transactionService.create(transactionDTO1, savedUserEntity.getId());
+        TransactionEntity createdEntity2 = transactionService.create(transactionDTO2, savedUserEntity.getId());
 
         Set<TransactionEntity> transactions = new TreeSet<>(Comparator.comparing(TransactionEntity::getDtCreate));
         transactions.add(createdEntity1);
         transactions.add(createdEntity2);
 
-        Assertions.assertEquals(transactions, transactionService.get(accountEntity));
+        Set<TransactionEntity> savedTransactions = transactionService.get(savedAccountEntity);
+
+        Assertions.assertEquals(transactions, savedTransactions);
     }
 
     @Test
     @DisplayName("Test for finding transaction by id with return value as boolean")
     void isExistTest() {
-        UserCreateDTO userCreateDTO = new UserCreateDTO("test23", UserRole.USER, "32tset");
-        userService.create(userCreateDTO);
+        UserEntity userEntity = new UserEntity();
+        userEntity.setLogin("Have never been created transaction CreateTestAudit");
+        userEntity.setPassword("1tset");
+        userEntity.setRole(UserRole.USER);
+        UserEntity savedUserEntity = userDao.save(userEntity);
 
-        UUID uuid = UUID.randomUUID();
-        AccountDTO accountDTO = new AccountDTO(uuid, new BigDecimal("0.0"), "test23");
-        accountService.create(accountDTO);
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setUserId(savedUserEntity.getId());
+        accountEntity.setBalance(new BigDecimal("0.0"));
+        AccountEntity savedAccountEntity = accountDao.save(accountEntity);
 
-        TransactionDTO transactionDTO = new TransactionDTO(
-                "zxcvbnm", Operation.CREDIT,
-                new BigDecimal("3.4"), uuid);
-        TransactionEntity createdEntity = transactionService.create(transactionDTO, userCreateDTO.getLogin());
+        TransactionEntity transactionEntity = new TransactionEntity();
+        transactionEntity.setTransactionId(UUID.randomUUID().toString());
+        transactionEntity.setSumOfTransaction(new BigDecimal("3.3"));
+        transactionEntity.setOperation(Operation.CREDIT);
+        transactionEntity.setDtCreate(LocalDateTime.now());
+        transactionEntity.setAccountId(savedAccountEntity.getId());
+        TransactionEntity savedTransactionEntity = transactionDao.save(transactionEntity);
 
-        Assertions.assertTrue(transactionService.isExist(createdEntity.getTransactionId()));
+        Assertions.assertTrue(transactionService.isExist(savedTransactionEntity.getTransactionId()));
     }
 
 

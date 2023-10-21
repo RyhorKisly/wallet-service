@@ -6,6 +6,7 @@ import io.ylab.walletservice.core.dto.UserDTO;
 import io.ylab.walletservice.core.dto.UserLoginDTO;
 import io.ylab.walletservice.dao.entity.UserEntity;
 import io.ylab.walletservice.service.api.IUserAuthenticationService;
+import lombok.RequiredArgsConstructor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.io.IOException;
 /**
  * Class fo interaction between {@link IUserAuthenticationService} and {@link Menu}
  */
+@RequiredArgsConstructor
 public class AuthenticationGate {
 
     /**
@@ -24,6 +26,11 @@ public class AuthenticationGate {
      * Print if user was registered successfully
      */
     private static final String REGISTERED_SUCCESS = "You have successfully registered.";
+
+    /**
+     * Print if user fail registration
+     */
+    private static final String REGISTERED_FAIL = "Fail registration.";
 
     /**
      * Print that user have to enter param or enter stop
@@ -66,14 +73,6 @@ public class AuthenticationGate {
     private final IUserAuthenticationService authenticationService;
 
     /**
-     * Used for passing an instance of a {@link IUserAuthenticationService} from outside
-     * @param authenticationService passed to the constructor to establish Aggregation
-     */
-    public AuthenticationGate(IUserAuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
-
-    /**
      * Register user in the system. User enter login and password and after that
      * user can log in into the account
      * With registration in up is created Account with number and assigned to registered user
@@ -81,13 +80,17 @@ public class AuthenticationGate {
      */
     public void register(BufferedReader reader) {
         String login = enterParam(reader, LOGIN);
-        StringBuilder password = new StringBuilder(enterParam(reader, PASSWORD));
+        String password = enterParam(reader, PASSWORD);
         UserCreateDTO userCreateDTO = new UserCreateDTO(
                 login,
                 UserRole.USER,
-                password.reverse().toString()
+                password
         );
-        authenticationService.register(userCreateDTO);
+        UserEntity userEntity = authenticationService.register(userCreateDTO);
+        if(userEntity.getId() == null) {
+            System.out.println(REGISTERED_FAIL);
+            return;
+        }
         System.out.println(REGISTERED_SUCCESS);
     }
 
@@ -150,6 +153,7 @@ public class AuthenticationGate {
      */
     private UserDTO convertToDTO(UserEntity userEntity) {
         UserDTO userDTO = new UserDTO();
+        userDTO.setId(userEntity.getId());
         userDTO.setLogin(userEntity.getLogin());
         userDTO.setUserRole(userEntity.getRole());
         return userDTO;

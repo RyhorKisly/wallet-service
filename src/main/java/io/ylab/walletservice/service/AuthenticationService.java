@@ -10,15 +10,16 @@ import io.ylab.walletservice.service.api.IAccountService;
 import io.ylab.walletservice.service.api.IAuditService;
 import io.ylab.walletservice.service.api.IUserAuthenticationService;
 import io.ylab.walletservice.service.api.IUserService;
+import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 /**
  * Class for generic operations on a service for users authentication.
  * Interact with {@link IUserService}, {@link IAccountDao ,} and {@link IAuditService}
  * This an implementation of {@link IUserAuthenticationService}
  */
+@RequiredArgsConstructor
 public class AuthenticationService implements IUserAuthenticationService {
 
     /**
@@ -52,23 +53,6 @@ public class AuthenticationService implements IUserAuthenticationService {
     private final IAuditService auditService;
 
     /**
-     * Constructor initialize the Class AuthenticationService
-     * @param userService for initialization of the Class IUserService
-     * @param accountService for initialization of the Class IAccountService
-     * @param auditService for initialization of the Class IAuditService
-     */
-    public AuthenticationService(
-            IUserService userService,
-            IAccountService accountService,
-            IAuditService auditService
-    ) {
-        this.userService = userService;
-        this.accountService = accountService;
-        this.auditService = auditService;
-
-    }
-
-    /**
      * Used to create user by registration
      * Create user and account. Account with random numberAccount(ID) and 0.0 balance.
      * @param dto used for registration user
@@ -76,15 +60,20 @@ public class AuthenticationService implements IUserAuthenticationService {
      */
     @Override
     public UserEntity register(UserCreateDTO dto) {
-        AccountDTO accountDTO = new AccountDTO(
-                UUID.randomUUID(),
-                new BigDecimal("0.0"),
-                dto.getLogin()
-        );
-        accountService.create(accountDTO);
-        UserEntity userEntity = userService.create(dto);
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setBalance(new BigDecimal("0.0"));
+        accountDTO.setLogin(dto.getLogin());
 
-        AuditDTO auditDTO = new AuditDTO(userEntity.getLogin(), USER_REGISTERED);
+        String password = encodePassword(dto.getPassword());
+        dto.setPassword(password);
+        UserEntity userEntity = userService.create(dto);
+        if(userEntity.getId() == null) {
+            return userEntity;
+        }
+
+        accountService.create(accountDTO);
+
+        AuditDTO auditDTO = new AuditDTO(userEntity.getId(), USER_REGISTERED);
         auditService.create(auditDTO);
 
         return userEntity;
@@ -104,7 +93,7 @@ public class AuthenticationService implements IUserAuthenticationService {
                 System.out.println(WRONG_DATES);
                 return null;
             } else {
-                AuditDTO auditDTO = new AuditDTO(userEntity.getLogin(), USER_SIGNED);
+                AuditDTO auditDTO = new AuditDTO(userEntity.getId(), USER_SIGNED);
                 auditService.create(auditDTO);
                 return userEntity;
             }
@@ -121,4 +110,5 @@ public class AuthenticationService implements IUserAuthenticationService {
     private String encodePassword(String password) {
         return new StringBuffer(password).reverse().toString();
     }
+
 }

@@ -1,7 +1,8 @@
-package io.ylab.walletservice.dao.memory.factory;
+package io.ylab.walletservice.dao.factory;
 
 import io.ylab.walletservice.dao.api.IUserDao;
-import io.ylab.walletservice.dao.memory.UserDao;
+import io.ylab.walletservice.dao.UserDao;
+import io.ylab.walletservice.dao.ds.factory.ConnectionWrapperFactory;
 
 /**
  * Class implementing the singleton pattern for UserDao
@@ -29,7 +30,7 @@ public class UserDaoFactory {
         if(instance == null) {
             synchronized (UserDaoFactory.class) {
                 if(instance == null) {
-                    instance = new UserDao();
+                    instance = new UserDao(ConnectionWrapperFactory.getInstance());
                 }
             }
         }

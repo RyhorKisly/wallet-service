@@ -1,6 +1,6 @@
 package io.ylab.walletservice.service.factory;
 
-import io.ylab.walletservice.dao.memory.factory.AccountDaoFactory;
+import io.ylab.walletservice.dao.factory.AccountDaoFactory;
 import io.ylab.walletservice.service.AccountService;
 import io.ylab.walletservice.service.api.IAccountService;
 
@@ -32,7 +32,8 @@ public class AccountServiceFactory {
                 if(instance == null) {
                     instance = new AccountService(
                             AccountDaoFactory.getInstance(),
-                            AuditServiceFactory.getInstance()
+                            AuditServiceFactory.getInstance(),
+                            UserServiceFactory.getInstance()
                     );
                 }
             }

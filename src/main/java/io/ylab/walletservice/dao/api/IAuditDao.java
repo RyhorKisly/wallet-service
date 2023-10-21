@@ -24,4 +24,5 @@ public interface IAuditDao {
      * @return the saved entity
      */
     AuditEntity save(AuditEntity auditEntity);
+
 }
