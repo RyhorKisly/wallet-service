@@ -24,14 +24,6 @@ public class Main {
      * @param args command line values
      */
     public static void main(String[] args) {
-        //todo во всех тестах сделать как в тесте юзер дао и потом улучшить сами тесты
-        // осталось 3 теста (authentication, Transactional, User services)
-
-        //todo delete methods delete in daos
-
-
-        //todo добвить документацию
-
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         AuthenticationGate authenticationGate = new AuthenticationGate(UserAuthenticationServiceFactory.getInstance());
