@@ -39,9 +39,4 @@ public interface ITransactionDao {
      */
     Set<TransactionEntity> findAllByNumberAccountAscByDTCreate(Long numberAccount);
 
-    /**
-     * Method just for testing method save()
-     * @param TransactionId for finding and deleting transaction
-     */
-    void delete(String TransactionId);
 }

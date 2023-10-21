@@ -130,18 +130,4 @@ public class UserDao implements IUserDao {
         return entity;
     }
 
-    /**
-     * Method just for testing method save()
-     * @param id for finding and deleting user
-     */
-    @Override
-    public void delete(Long id) {
-        try (Connection conn = this.connection.getConnection()){
-            PreparedStatement preparedStatement = conn.prepareStatement(DELETE_USER);
-            preparedStatement.setLong(1, id);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(ERROR_CONNECTION, e);
-        }
-    }
 }

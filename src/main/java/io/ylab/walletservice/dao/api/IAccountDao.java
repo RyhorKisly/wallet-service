@@ -46,9 +46,4 @@ public interface IAccountDao {
      */
     AccountEntity updateBalance(AccountEntity entity);
 
-    /**
-     * Method just for testing method save()
-     * @param id for finding and deleting account
-     */
-    void delete(Long id);
 }

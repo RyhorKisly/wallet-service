@@ -129,33 +129,4 @@ public class AuditDao implements IAuditDao {
         return entity;
     }
 
-    /**
-     * Method just for testing method save()
-     * @param id for finding and deleting audit
-     */
-    @Override
-    public void delete(Long id) {
-        try (Connection conn =  this.connection.getConnection()){
-            PreparedStatement preparedStatement = conn.prepareStatement(DELETE_AUDIT);
-            preparedStatement.setLong(1, id);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(ERROR_CONNECTION, e);
-        }
-    }
-
-    /**
-     * Method just for testing
-     * @param userId for finding and deleting audit
-     */
-    @Override
-    public void deleteByUserId(Long userId) {
-        try (Connection conn =  this.connection.getConnection()){
-            PreparedStatement preparedStatement = conn.prepareStatement(DELETE_AUDIT_BY_LOGIN);
-            preparedStatement.setLong(1, userId);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(ERROR_CONNECTION, e);
-        }
-    }
 }

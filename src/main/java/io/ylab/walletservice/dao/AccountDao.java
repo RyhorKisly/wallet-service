@@ -216,18 +216,4 @@ public class AccountDao implements IAccountDao {
         return entity;
     }
 
-    /**
-     * Method just for testing method save()
-     * @param id for finding and deleting account
-     */
-    @Override
-    public void delete(Long id) {
-        try (Connection connection =  this.connection.getConnection()){
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ACCOUNT);
-            preparedStatement.setLong(1, id);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(ERROR_CONNECTION, e);
-        }
-    }
 }

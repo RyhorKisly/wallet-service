@@ -194,18 +194,4 @@ public class TransactionDao implements ITransactionDao {
         return historyOfTransactions;
     }
 
-    /**
-     * Method just for testing method save()
-     * @param TransactionId for finding and deleting transaction
-     */
-    @Override
-    public void delete(String TransactionId) {
-        try (Connection connection = this.connection.getConnection()){
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_TRANSACTION);
-            preparedStatement.setString(1, TransactionId);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(ERROR_CONNECTION, e);
-        }
-    }
 }
