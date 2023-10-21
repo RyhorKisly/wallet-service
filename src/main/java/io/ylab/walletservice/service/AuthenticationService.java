@@ -64,6 +64,8 @@ public class AuthenticationService implements IUserAuthenticationService {
         accountDTO.setBalance(new BigDecimal("0.0"));
         accountDTO.setLogin(dto.getLogin());
 
+        String password = encodePassword(dto.getPassword());
+        dto.setPassword(password);
         UserEntity userEntity = userService.create(dto);
         if(userEntity.getId() == null) {
             return userEntity;
@@ -108,4 +110,5 @@ public class AuthenticationService implements IUserAuthenticationService {
     private String encodePassword(String password) {
         return new StringBuffer(password).reverse().toString();
     }
+
 }

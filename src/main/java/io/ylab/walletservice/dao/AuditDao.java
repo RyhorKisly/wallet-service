@@ -1,8 +1,9 @@
 package io.ylab.walletservice.dao;
 
 import io.ylab.walletservice.dao.api.IAuditDao;
-import io.ylab.walletservice.dao.utils.DatabaseConnectionFactory;
+import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 import io.ylab.walletservice.dao.entity.AuditEntity;
+import lombok.RequiredArgsConstructor;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,6 +15,7 @@ import java.util.*;
  * Class for generic operations on a repository for an Audit.
  * This an implementation of {@link IAuditDao}
  */
+@RequiredArgsConstructor
 public class AuditDao implements IAuditDao {
 
     /**
@@ -69,6 +71,11 @@ public class AuditDao implements IAuditDao {
             "WHERE user_id = ?;";
 
     /**
+     * define a field with a type {@link IConnectionWrapper} for further aggregation
+     */
+    private final IConnectionWrapper connection;
+
+    /**
      * find set of entities by login of the user
      * @param login find entity by user login
      * @return set of entities from {@code audits}
@@ -76,7 +83,7 @@ public class AuditDao implements IAuditDao {
     @Override
     public Set<AuditEntity> findAllByLoginAscByDTCreate(String login) {
         Set<AuditEntity> audit = new TreeSet<>(Comparator.comparing(AuditEntity::getDtCreate));
-        try (Connection conn = DatabaseConnectionFactory.getConnection();
+        try (Connection conn = this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(GET_AUDIT)) {
             ps.setObject(1, login);
             try(ResultSet rs = ps.executeQuery()) {
@@ -104,7 +111,7 @@ public class AuditDao implements IAuditDao {
      */
     @Override
     public AuditEntity save(AuditEntity entity) {
-        try (Connection conn = DatabaseConnectionFactory.getConnection();
+        try (Connection conn =  this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(SAVE_AUDIT)) {
 
             ps.setObject(1, entity.getDtCreate());
@@ -128,8 +135,8 @@ public class AuditDao implements IAuditDao {
      */
     @Override
     public void delete(Long id) {
-        try (Connection connection = DatabaseConnectionFactory.getConnection()){
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_AUDIT);
+        try (Connection conn =  this.connection.getConnection()){
+            PreparedStatement preparedStatement = conn.prepareStatement(DELETE_AUDIT);
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -143,8 +150,8 @@ public class AuditDao implements IAuditDao {
      */
     @Override
     public void deleteByUserId(Long userId) {
-        try (Connection connection = DatabaseConnectionFactory.getConnection()){
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_AUDIT_BY_LOGIN);
+        try (Connection conn =  this.connection.getConnection()){
+            PreparedStatement preparedStatement = conn.prepareStatement(DELETE_AUDIT_BY_LOGIN);
             preparedStatement.setLong(1, userId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

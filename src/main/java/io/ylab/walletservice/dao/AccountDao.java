@@ -1,8 +1,9 @@
 package io.ylab.walletservice.dao;
 
 import io.ylab.walletservice.dao.api.IAccountDao;
-import io.ylab.walletservice.dao.utils.DatabaseConnectionFactory;
+import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 import io.ylab.walletservice.dao.entity.AccountEntity;
+import lombok.RequiredArgsConstructor;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +14,7 @@ import java.sql.SQLException;
  * Class for generic operations on a repository for an Account.
  * This an implementation of {@link IAccountDao}
  */
+@RequiredArgsConstructor
 public class AccountDao implements IAccountDao {
 
     /**
@@ -81,6 +83,10 @@ public class AccountDao implements IAccountDao {
      */
     private static final String DELETE_ACCOUNT = "DELETE FROM app.\"Account\" WHERE id = ?;";
 
+    /**
+     * define a field with a type {@link IConnectionWrapper} for further aggregation
+     */
+    private final IConnectionWrapper connection;
 
     /**
      * find entity by number of an account
@@ -90,7 +96,7 @@ public class AccountDao implements IAccountDao {
     @Override
     public AccountEntity find(Long numberAccount) {
         AccountEntity accountEntity = null;
-        try (Connection conn = DatabaseConnectionFactory.getConnection();
+        try (Connection conn =  this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_ACCOUNT_BY_ID)) {
             ps.setObject(1, numberAccount);
             try(ResultSet rs = ps.executeQuery()) {
@@ -116,7 +122,7 @@ public class AccountDao implements IAccountDao {
     @Override
     public AccountEntity find(Long numberAccount, String login) {
         AccountEntity accountEntity = null;
-        try (Connection conn = DatabaseConnectionFactory.getConnection();
+        try (Connection conn =  this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_ACCOUNT_BY_ID_AND_LOGIN)) {
             ps.setObject(1, numberAccount);
             ps.setObject(2, login);
@@ -142,7 +148,7 @@ public class AccountDao implements IAccountDao {
     @Override
     public AccountEntity find(String login) {
         AccountEntity accountEntity = null;
-        try (Connection conn = DatabaseConnectionFactory.getConnection();
+        try (Connection conn =  this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_ACCOUNT_BY_LOGIN)) {
             ps.setObject(1, login);
             try(ResultSet rs = ps.executeQuery()) {
@@ -169,7 +175,7 @@ public class AccountDao implements IAccountDao {
      */
     @Override
     public AccountEntity save(AccountEntity entity) {
-        try (Connection conn = DatabaseConnectionFactory.getConnection();
+        try (Connection conn =  this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(SAVE_ACCOUNT)) {
 
             ps.setObject(1, entity.getBalance());
@@ -198,7 +204,7 @@ public class AccountDao implements IAccountDao {
      */
     @Override
     public AccountEntity updateBalance(AccountEntity entity) {
-        try (Connection conn = DatabaseConnectionFactory.getConnection();
+        try (Connection conn =  this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(UPDATE_ACCOUNT)) {
 
             ps.setObject(1, entity.getBalance());
@@ -216,7 +222,7 @@ public class AccountDao implements IAccountDao {
      */
     @Override
     public void delete(Long id) {
-        try (Connection connection = DatabaseConnectionFactory.getConnection()){
+        try (Connection connection =  this.connection.getConnection()){
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_ACCOUNT);
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();

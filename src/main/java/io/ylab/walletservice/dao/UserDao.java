@@ -1,9 +1,10 @@
 package io.ylab.walletservice.dao;
 
 import io.ylab.walletservice.core.enums.UserRole;
+import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 import io.ylab.walletservice.dao.api.IUserDao;
-import io.ylab.walletservice.dao.utils.DatabaseConnectionFactory;
 import io.ylab.walletservice.dao.entity.UserEntity;
+import lombok.RequiredArgsConstructor;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
  * Class for generic operations on a repository for User.
  * This an implementation of {@link IUserDao}
  */
+@RequiredArgsConstructor
 public class UserDao implements IUserDao {
 
     /**
@@ -66,13 +68,18 @@ public class UserDao implements IUserDao {
     private static final String DELETE_USER = "DELETE FROM app.\"User\" WHERE id = ?;";
 
     /**
+     * define a field with a type {@link IConnectionWrapper} for further aggregation
+     */
+    private final IConnectionWrapper connection;
+
+    /**
      * find entity by login
      * @param login find entity by login in {@code users}
      * @return entity from {@code users}
      */
     public UserEntity find(String login) {
         UserEntity userEntity = null;
-        try (Connection conn = DatabaseConnectionFactory.getConnection();
+        try (Connection conn = this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_USER)) {
             ps.setObject(1, login);
             try(ResultSet rs = ps.executeQuery()) {
@@ -100,7 +107,7 @@ public class UserDao implements IUserDao {
      */
     @Override
     public UserEntity save(UserEntity entity) {
-        try (Connection conn = DatabaseConnectionFactory.getConnection();
+        try (Connection conn = this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(SAVE_USER)) {
 
             ps.setObject(1, entity.getLogin());
@@ -115,6 +122,7 @@ public class UserDao implements IUserDao {
         } catch (SQLException e) {
             if(e.getMessage().contains(USER_LOGIN_UNIQUE)) {
                 System.out.println(LOGIN_EXIST);
+                entity.setId(null);
             } else {
                 throw new RuntimeException(ERROR_CONNECTION, e);
             }
@@ -128,8 +136,8 @@ public class UserDao implements IUserDao {
      */
     @Override
     public void delete(Long id) {
-        try (Connection connection = DatabaseConnectionFactory.getConnection()){
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_USER);
+        try (Connection conn = this.connection.getConnection()){
+            PreparedStatement preparedStatement = conn.prepareStatement(DELETE_USER);
             preparedStatement.setLong(1, id);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

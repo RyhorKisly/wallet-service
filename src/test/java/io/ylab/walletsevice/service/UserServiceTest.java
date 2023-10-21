@@ -6,21 +6,26 @@ import io.ylab.walletservice.core.enums.UserRole;
 import io.ylab.walletservice.dao.UserDao;
 import io.ylab.walletservice.dao.entity.UserEntity;
 import io.ylab.walletservice.service.UserService;
-import io.ylab.walletservice.service.factory.UserServiceFactory;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import io.ylab.walletsevice.dao.ds.factory.ConnectionWrapperFactoryTest;
+import io.ylab.walletsevice.dao.utils.api.ILiquibaseManagerTest;
+import io.ylab.walletsevice.dao.utils.factory.LiquibaseManagerTestFactory;
+import io.ylab.walletsevice.testcontainers.config.ContainersEnvironment;
+import org.junit.jupiter.api.*;
 
-public class UserServiceTest {
-    private UserService userService;
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class UserServiceTest extends ContainersEnvironment {
     private UserDao userDao;
+    private UserService userService;
+    private ILiquibaseManagerTest liquibaseManagerTest;
 
-    @BeforeEach
+    @BeforeAll
     @DisplayName("Initialize classes for tests")
     public void setUp() {
-        userService = (UserService) UserServiceFactory.getInstance();
-        userDao = new UserDao();
+        userDao = new UserDao(ConnectionWrapperFactoryTest.getInstance());
+        userService = new UserService(userDao);
+
+        liquibaseManagerTest = LiquibaseManagerTestFactory.getInstance();
+        liquibaseManagerTest.migrateDbCreate();
     }
 
     @Test

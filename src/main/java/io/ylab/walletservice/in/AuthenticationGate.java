@@ -80,11 +80,11 @@ public class AuthenticationGate {
      */
     public void register(BufferedReader reader) {
         String login = enterParam(reader, LOGIN);
-        StringBuilder password = new StringBuilder(enterParam(reader, PASSWORD));
+        String password = enterParam(reader, PASSWORD);
         UserCreateDTO userCreateDTO = new UserCreateDTO(
                 login,
                 UserRole.USER,
-                password.reverse().toString()
+                password
         );
         UserEntity userEntity = authenticationService.register(userCreateDTO);
         if(userEntity.getId() == null) {

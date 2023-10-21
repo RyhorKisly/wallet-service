@@ -2,6 +2,7 @@ package io.ylab.walletservice.dao.factory;
 
 import io.ylab.walletservice.dao.api.IAuditDao;
 import io.ylab.walletservice.dao.AuditDao;
+import io.ylab.walletservice.dao.ds.factory.ConnectionWrapperFactory;
 
 /**
  * Class implementing the singleton pattern for AuditDao
@@ -29,7 +30,7 @@ public class AuditDaoFactory {
         if(instance == null) {
             synchronized (AuditDaoFactory.class) {
                 if(instance == null) {
-                    instance = new AuditDao();
+                    instance = new AuditDao(ConnectionWrapperFactory.getInstance());
                 }
             }
         }

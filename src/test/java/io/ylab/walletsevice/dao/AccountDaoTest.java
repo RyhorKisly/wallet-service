@@ -5,24 +5,34 @@ import io.ylab.walletservice.dao.AccountDao;
 import io.ylab.walletservice.dao.UserDao;
 import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.entity.UserEntity;
+import io.ylab.walletsevice.dao.ds.factory.ConnectionWrapperFactoryTest;
+import io.ylab.walletsevice.dao.utils.api.ILiquibaseManagerTest;
+import io.ylab.walletsevice.dao.utils.factory.LiquibaseManagerTestFactory;
 import io.ylab.walletsevice.testcontainers.config.ContainersEnvironment;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AccountDaoTest extends ContainersEnvironment {
     private AccountDao accountDao;
     private UserDao userDao;
+    private ILiquibaseManagerTest liquibaseManagerTest;
     @BeforeEach
     @DisplayName("Initialize class for tests")
     public void setUp() {
-        accountDao = new AccountDao();
-        userDao = new UserDao();
+        accountDao = new AccountDao(ConnectionWrapperFactoryTest.getInstance());
+        userDao = new UserDao(ConnectionWrapperFactoryTest.getInstance());
+        liquibaseManagerTest = LiquibaseManagerTestFactory.getInstance();
+        liquibaseManagerTest.migrateDbCreate();
+    }
+
+    @AfterEach
+    @DisplayName("Migrates dates to drop schema and tables")
+    public void drop() {
+        this.liquibaseManagerTest.migrateDbDrop();
     }
 
     @Test
@@ -39,9 +49,6 @@ public class AccountDaoTest extends ContainersEnvironment {
         accountEntity.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
 
-        accountDao.delete(savedAccountEntity.getId());
-        userDao.delete(savedUserEntity.getId());
-
         assertEquals(accountEntity.getBalance(), savedAccountEntity.getBalance());
         assertEquals(accountEntity.getUserId(), savedAccountEntity.getUserId());
     }
@@ -56,9 +63,9 @@ public class AccountDaoTest extends ContainersEnvironment {
         UserEntity savedUserEntity = userDao.save(userEntity);
 
         AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setUserId(userEntity.getId());
+        accountEntity.setUserId(savedUserEntity.getId());
         accountEntity.setBalance(new BigDecimal("0.0"));
-        AccountEntity savedAccountEntity = accountDao.save(accountEntity);
+        accountDao.save(accountEntity);
 
         AccountEntity accountEntity2 = new AccountEntity();
         accountEntity2.setUserId(userEntity.getId());
@@ -67,8 +74,6 @@ public class AccountDaoTest extends ContainersEnvironment {
 
         Assertions.assertNull(savedAccountEntity2.getId());
 
-        accountDao.delete(savedAccountEntity.getId());
-        userDao.delete(savedUserEntity.getId());
     }
 
     @Test
@@ -81,13 +86,10 @@ public class AccountDaoTest extends ContainersEnvironment {
         UserEntity savedEntity = userDao.save(userEntity);
 
         AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setUserId(userEntity.getId());
+        accountEntity.setUserId(savedEntity.getId());
         accountEntity.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
         AccountEntity foundAccountEntity = accountDao.find(savedAccountEntity.getId());
-
-        accountDao.delete(savedAccountEntity.getId());
-        userDao.delete(savedEntity.getId());
 
         Assertions.assertEquals(savedAccountEntity, foundAccountEntity);
     }
@@ -108,13 +110,10 @@ public class AccountDaoTest extends ContainersEnvironment {
         UserEntity savedEntity = userDao.save(userEntity);
 
         AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setUserId(userEntity.getId());
+        accountEntity.setUserId(savedEntity.getId());
         accountEntity.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
         AccountEntity foundAccountEntity = accountDao.find(savedAccountEntity.getId(), userEntity.getLogin());
-
-        accountDao.delete(savedAccountEntity.getId());
-        userDao.delete(savedEntity.getId());
 
         Assertions.assertEquals(savedAccountEntity, foundAccountEntity);
     }
@@ -135,13 +134,10 @@ public class AccountDaoTest extends ContainersEnvironment {
         UserEntity savedEntity = userDao.save(userEntity);
 
         AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setUserId(userEntity.getId());
+        accountEntity.setUserId(savedEntity.getId());
         accountEntity.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
         AccountEntity foundAccountEntity = accountDao.find(userEntity.getLogin());
-
-        accountDao.delete(savedAccountEntity.getId());
-        userDao.delete(savedEntity.getId());
 
         Assertions.assertEquals(savedAccountEntity, foundAccountEntity);
     }
@@ -162,14 +158,11 @@ public class AccountDaoTest extends ContainersEnvironment {
         UserEntity savedUserEntity = userDao.save(userEntity);
 
         AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setUserId(userEntity.getId());
+        accountEntity.setUserId(savedUserEntity.getId());
         accountEntity.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
         savedAccountEntity.setBalance(new BigDecimal("3.4"));
         AccountEntity updatedAccountEntity = accountDao.updateBalance(savedAccountEntity);
-
-        accountDao.delete(updatedAccountEntity.getId());
-        userDao.delete(savedUserEntity.getId());
 
         assertEquals(savedAccountEntity.getBalance(), updatedAccountEntity.getBalance());
     }

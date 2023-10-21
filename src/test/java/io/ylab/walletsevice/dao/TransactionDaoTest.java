@@ -8,11 +8,11 @@ import io.ylab.walletservice.dao.UserDao;
 import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
 import io.ylab.walletservice.dao.entity.UserEntity;
+import io.ylab.walletsevice.dao.ds.factory.ConnectionWrapperFactoryTest;
+import io.ylab.walletsevice.dao.utils.api.ILiquibaseManagerTest;
+import io.ylab.walletsevice.dao.utils.factory.LiquibaseManagerTestFactory;
 import io.ylab.walletsevice.testcontainers.config.ContainersEnvironment;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,17 +20,28 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TransactionDaoTest extends ContainersEnvironment {
 
     private TransactionDao transactionDao;
     private UserDao userDao;
     private AccountDao accountDao;
-    @BeforeEach
+    private ILiquibaseManagerTest liquibaseManagerTest;
+
+    @BeforeAll
     @DisplayName("Initialize class for tests")
     public void setUp() {
-        transactionDao = new TransactionDao();
-        userDao = new UserDao();
-        accountDao = new AccountDao();
+        transactionDao = new TransactionDao(ConnectionWrapperFactoryTest.getInstance());
+        userDao = new UserDao(ConnectionWrapperFactoryTest.getInstance());
+        accountDao = new AccountDao(ConnectionWrapperFactoryTest.getInstance());
+        liquibaseManagerTest = LiquibaseManagerTestFactory.getInstance();
+        liquibaseManagerTest.migrateDbCreate();
+    }
+
+    @AfterEach
+    @DisplayName("Migrates dates to drop schema and tables")
+    public void drop() {
+        this.liquibaseManagerTest.migrateDbDrop();
     }
 
     @Test
@@ -43,7 +54,7 @@ public class TransactionDaoTest extends ContainersEnvironment {
         UserEntity savedUserEntity = userDao.save(userEntity);
 
         AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setUserId(userEntity.getId());
+        accountEntity.setUserId(savedUserEntity.getId());
         accountEntity.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
 
@@ -54,10 +65,6 @@ public class TransactionDaoTest extends ContainersEnvironment {
         transactionEntity.setDtCreate(LocalDateTime.now());
         transactionEntity.setAccountId(savedAccountEntity.getId());
         TransactionEntity savedTransactionEntity = transactionDao.save(transactionEntity);
-
-        transactionDao.delete(savedTransactionEntity.getTransactionId());
-        accountDao.delete(savedAccountEntity.getId());
-        userDao.delete(savedUserEntity.getId());
 
         assertEquals(transactionEntity, savedTransactionEntity);
     }
@@ -85,10 +92,6 @@ public class TransactionDaoTest extends ContainersEnvironment {
         TransactionEntity savedTransactionEntity = transactionDao.save(transactionEntity);
         TransactionEntity foundTransactionEntity = transactionDao.find(savedTransactionEntity.getTransactionId());
 
-        transactionDao.delete(savedTransactionEntity.getTransactionId());
-        accountDao.delete(savedAccountEntity.getId());
-        userDao.delete(savedUserEntity.getId());
-
         Assertions.assertEquals(savedTransactionEntity, foundTransactionEntity);
     }
 
@@ -101,9 +104,16 @@ public class TransactionDaoTest extends ContainersEnvironment {
     @Test
     @DisplayName("Test for checking transaction by id exist or not")
     void isExistTest() {
-        UserEntity userEntity = userDao.find("admin");
+        UserEntity userEntity = new UserEntity();
+        userEntity.setLogin("Have never been created account test1");
+        userEntity.setPassword("1tset");
+        userEntity.setRole(UserRole.USER);
+        UserEntity savedUserEntity = userDao.save(userEntity);
 
-        AccountEntity savedAccountEntity = accountDao.find(userEntity.getLogin());
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setUserId(savedUserEntity.getId());
+        accountEntity.setBalance(new BigDecimal("0.0"));
+        AccountEntity savedAccountEntity = accountDao.save(accountEntity);
 
         TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setTransactionId(UUID.randomUUID().toString());
@@ -114,8 +124,6 @@ public class TransactionDaoTest extends ContainersEnvironment {
         TransactionEntity savedTransactionEntity = transactionDao.save(transactionEntity);
 
         Assertions.assertTrue(transactionDao.isExist(savedTransactionEntity.getTransactionId()));
-
-        transactionDao.delete(savedTransactionEntity.getTransactionId());
     }
 
 }

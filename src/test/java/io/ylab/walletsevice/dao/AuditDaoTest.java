@@ -5,23 +5,35 @@ import io.ylab.walletservice.dao.AuditDao;
 import io.ylab.walletservice.dao.UserDao;
 import io.ylab.walletservice.dao.entity.AuditEntity;
 import io.ylab.walletservice.dao.entity.UserEntity;
+import io.ylab.walletsevice.dao.ds.factory.ConnectionWrapperFactoryTest;
+import io.ylab.walletsevice.dao.utils.api.ILiquibaseManagerTest;
+import io.ylab.walletsevice.dao.utils.factory.LiquibaseManagerTestFactory;
 import io.ylab.walletsevice.testcontainers.config.ContainersEnvironment;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AuditDaoTest extends ContainersEnvironment {
     private AuditDao auditDao;
     private UserDao userDao;
-    @BeforeEach
+    private ILiquibaseManagerTest liquibaseManagerTest;
+
+    @BeforeAll
     @DisplayName("Initialize class for tests")
     public void setUp() {
-        auditDao = new AuditDao();
-        userDao = new UserDao();
+        auditDao = new AuditDao(ConnectionWrapperFactoryTest.getInstance());
+        userDao = new UserDao(ConnectionWrapperFactoryTest.getInstance());
+        liquibaseManagerTest = LiquibaseManagerTestFactory.getInstance();
+        liquibaseManagerTest.migrateDbCreate();
+    }
+
+    @AfterEach
+    @DisplayName("Migrates dates to drop schema and tables")
+    public void drop() {
+        this.liquibaseManagerTest.migrateDbDrop();
     }
 
     @Test
@@ -33,13 +45,10 @@ public class AuditDaoTest extends ContainersEnvironment {
         UserEntity savedUserEntity = userDao.save(userEntity);
 
         AuditEntity auditEntity = new AuditEntity();
-        auditEntity.setUserId(userEntity.getId());
+        auditEntity.setUserId(savedUserEntity.getId());
         auditEntity.setDtCreate(LocalDateTime.now());
         auditEntity.setText("test");
         AuditEntity savedAuditEntity = auditDao.save(auditEntity);
-
-        auditDao.delete(savedAuditEntity.getId());
-        userDao.delete(savedUserEntity.getId());
 
         assertEquals(auditEntity.getText(), savedAuditEntity.getText());
         assertEquals(auditEntity.getUserId(), savedAuditEntity.getUserId());

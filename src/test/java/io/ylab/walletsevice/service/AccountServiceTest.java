@@ -5,36 +5,49 @@ import io.ylab.walletservice.core.enums.UserRole;
 import io.ylab.walletservice.dao.AccountDao;
 import io.ylab.walletservice.dao.AuditDao;
 import io.ylab.walletservice.dao.UserDao;
-import io.ylab.walletservice.dao.factory.AccountDaoFactory;
 import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.entity.UserEntity;
 import io.ylab.walletservice.service.AccountService;
-import io.ylab.walletservice.service.factory.AccountServiceFactory;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import io.ylab.walletservice.service.AuditService;
+import io.ylab.walletservice.service.UserService;
+import io.ylab.walletsevice.dao.ds.factory.ConnectionWrapperFactoryTest;
+import io.ylab.walletsevice.dao.utils.api.ILiquibaseManagerTest;
+import io.ylab.walletsevice.dao.utils.factory.LiquibaseManagerTestFactory;
+import io.ylab.walletsevice.testcontainers.config.ContainersEnvironment;
+import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class AccountServiceTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class AccountServiceTest extends ContainersEnvironment {
 
     private AccountService accountService;
-
     private AccountDao accountDao;
     private UserDao userDao;
-    private AuditDao auditDao;
+    private ILiquibaseManagerTest liquibaseManagerTest;
 
-    @BeforeEach
+    @BeforeAll
     @DisplayName("Initialize classes for tests")
     public void setUp() {
-        accountDao = (AccountDao) AccountDaoFactory.getInstance();
-        accountService = (AccountService) AccountServiceFactory.getInstance();
-        userDao = new UserDao();
-        auditDao = new AuditDao();
+        this.userDao = new UserDao(ConnectionWrapperFactoryTest.getInstance());
+        this.accountDao = new AccountDao(ConnectionWrapperFactoryTest.getInstance());
+        AuditDao auditDao = new AuditDao(ConnectionWrapperFactoryTest.getInstance());
+        UserService userService = new UserService(userDao);
+        AuditService auditService = new AuditService(auditDao);
+
+        this.accountService = new AccountService(accountDao, auditService, userService);
+        liquibaseManagerTest = LiquibaseManagerTestFactory.getInstance();
+        liquibaseManagerTest.migrateDbCreate();
     }
+
+    @AfterEach
+    @DisplayName("Migrates dates to drop schema and tables")
+    public void drop() {
+        this.liquibaseManagerTest.migrateDbDrop();
+    }
+
     @Test
     @DisplayName("Test for creating account")
     void createTest() {
@@ -48,10 +61,6 @@ class AccountServiceTest {
         accountDTO.setLogin(userEntity.getLogin());
         accountDTO.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountService.create(accountDTO);
-
-        accountDao.delete(savedAccountEntity.getId());
-        auditDao.deleteByUserId(savedUserEntity.getId());
-        userDao.delete(savedUserEntity.getId());
 
         assertEquals(accountDTO.getBalance(), savedAccountEntity.getBalance());
         assertEquals(savedUserEntity.getId(), savedAccountEntity.getUserId());
@@ -72,9 +81,6 @@ class AccountServiceTest {
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
         AccountEntity foundAccountEntity = accountService.get(savedAccountEntity.getId());
 
-        accountDao.delete(savedAccountEntity.getId());
-        userDao.delete(savedEntity.getId());
-
         Assertions.assertEquals(savedAccountEntity, foundAccountEntity);
     }
 
@@ -93,9 +99,6 @@ class AccountServiceTest {
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
         AccountEntity foundAccountEntity = accountService.get(savedAccountEntity.getId(), userEntity.getLogin());
 
-        accountDao.delete(savedAccountEntity.getId());
-        userDao.delete(savedEntity.getId());
-
         Assertions.assertEquals(savedAccountEntity, foundAccountEntity);
     }
 
@@ -113,9 +116,6 @@ class AccountServiceTest {
         accountEntity.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
         AccountEntity foundAccountEntity = accountService.get(userEntity.getLogin());
-
-        accountDao.delete(savedAccountEntity.getId());
-        userDao.delete(savedEntity.getId());
 
         Assertions.assertEquals(savedAccountEntity, foundAccountEntity);
     }

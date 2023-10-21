@@ -5,31 +5,41 @@ import io.ylab.walletservice.core.enums.UserRole;
 import io.ylab.walletservice.dao.UserDao;
 import io.ylab.walletservice.dao.entity.AuditEntity;
 import io.ylab.walletservice.dao.AuditDao;
-import io.ylab.walletservice.dao.factory.AuditDaoFactory;
 import io.ylab.walletservice.dao.entity.UserEntity;
 import io.ylab.walletservice.service.AuditService;
-import io.ylab.walletservice.service.factory.AuditServiceFactory;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import io.ylab.walletsevice.dao.ds.factory.ConnectionWrapperFactoryTest;
+import io.ylab.walletsevice.dao.utils.api.ILiquibaseManagerTest;
+import io.ylab.walletsevice.dao.utils.factory.LiquibaseManagerTestFactory;
+import io.ylab.walletsevice.testcontainers.config.ContainersEnvironment;
+import org.junit.jupiter.api.*;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class AuditServiceTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class AuditServiceTest extends ContainersEnvironment {
+    private UserDao userDao;
     private AuditDao auditDao;
     private AuditService auditService;
-    private UserDao userDao;
+    private ILiquibaseManagerTest liquibaseManagerTest;
 
-    @BeforeEach
+    @BeforeAll
     @DisplayName("Initialize classes for tests")
     public void setUp() {
-        auditDao = (AuditDao) AuditDaoFactory.getInstance();
-        auditService = (AuditService) AuditServiceFactory.getInstance();
-        userDao = new UserDao();
+        userDao = new UserDao(ConnectionWrapperFactoryTest.getInstance());
+        auditDao = new AuditDao(ConnectionWrapperFactoryTest.getInstance());
+        auditService = new AuditService(auditDao);
+
+        liquibaseManagerTest = LiquibaseManagerTestFactory.getInstance();
+        liquibaseManagerTest.migrateDbCreate();
+    }
+
+    @AfterEach
+    @DisplayName("Migrates dates to drop schema and tables")
+    public void drop() {
+        this.liquibaseManagerTest.migrateDbDrop();
     }
 
     @Test
@@ -60,22 +70,20 @@ public class AuditServiceTest {
 
 
         Assertions.assertEquals(audits, auditService.getAllByLogin(savedUserEntity.getLogin()));
-
-        auditDao.delete(auditEntity.getId());
-        auditDao.delete(auditEntity2.getId());
-        userDao.delete(savedUserEntity.getId());
     }
 
     @Test
     @DisplayName("Test for creating audit")
     void createTest() {
-        UserEntity userEntity = userDao.find("admin");
+        UserEntity userEntity = new UserEntity();
+        userEntity.setLogin("Have never been created account test1");
+        userEntity.setPassword("1tset");
+        userEntity.setRole(UserRole.USER);
+        UserEntity savedUserEntity = userDao.save(userEntity);
 
-        AuditDTO auditDTO = new AuditDTO(userEntity.getId(),"firstTestByAdmin");
+        AuditDTO auditDTO = new AuditDTO(savedUserEntity.getId(),"firstTestByAdmin");
 
         AuditEntity entity = auditService.create(auditDTO);
-
-        auditDao.delete(entity.getId());
 
         Assertions.assertEquals(auditDTO.getText(), entity.getText());
         Assertions.assertEquals(auditDTO.getUserId(), entity.getUserId());

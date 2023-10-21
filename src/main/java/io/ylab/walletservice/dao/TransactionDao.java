@@ -1,9 +1,10 @@
 package io.ylab.walletservice.dao;
 
 import io.ylab.walletservice.core.enums.Operation;
+import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 import io.ylab.walletservice.dao.api.ITransactionDao;
-import io.ylab.walletservice.dao.utils.DatabaseConnectionFactory;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
+import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -17,6 +18,7 @@ import java.util.Set;
  * Class for generic operations on a repository for Transaction.
  * This an implementation of {@link ITransactionDao}
  */
+@RequiredArgsConstructor
 public class TransactionDao implements ITransactionDao {
 
     /**
@@ -76,6 +78,11 @@ public class TransactionDao implements ITransactionDao {
     private static final String DELETE_TRANSACTION = "DELETE FROM app.\"Transaction\" WHERE id = ?;";
 
     /**
+     * define a field with a type {@link IConnectionWrapper} for further aggregation
+     */
+    private final IConnectionWrapper connection;
+
+    /**
      * find entity by ID
      * @param transactionalId find entity by ID
      * @return entity from {@code transactions}
@@ -83,7 +90,7 @@ public class TransactionDao implements ITransactionDao {
     @Override
     public TransactionEntity find(String transactionalId) {
         TransactionEntity entity = null;
-        try (Connection conn = DatabaseConnectionFactory.getConnection();
+        try (Connection conn = this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_TRANSACTION)) {
             ps.setObject(1, transactionalId);
             try(ResultSet rs = ps.executeQuery()) {
@@ -111,7 +118,7 @@ public class TransactionDao implements ITransactionDao {
     public boolean isExist(String transactionalId) {
         boolean check = true;
         TransactionEntity entity = null;
-        try (Connection conn = DatabaseConnectionFactory.getConnection();
+        try (Connection conn = this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_TRANSACTION)) {
             ps.setObject(1, transactionalId);
             try(ResultSet rs = ps.executeQuery()) {
@@ -143,7 +150,7 @@ public class TransactionDao implements ITransactionDao {
      */
     @Override
     public TransactionEntity save(TransactionEntity entity) {
-        try (Connection conn = DatabaseConnectionFactory.getConnection();
+        try (Connection conn = this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(SAVE_TRANSACTION)) {
 
             ps.setObject(1, entity.getTransactionId());
@@ -167,7 +174,7 @@ public class TransactionDao implements ITransactionDao {
     @Override
     public Set<TransactionEntity> findAllByNumberAccountAscByDTCreate(Long numberAccount) {
         Set<TransactionEntity> historyOfTransactions = new LinkedHashSet<>();
-        try (Connection conn = DatabaseConnectionFactory.getConnection();
+        try (Connection conn = this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_ALL_TRANSACTION_BY_ACCOUNT_ASC_DATE)) {
             ps.setObject(1, numberAccount);
             try(ResultSet rs = ps.executeQuery()) {
@@ -193,7 +200,7 @@ public class TransactionDao implements ITransactionDao {
      */
     @Override
     public void delete(String TransactionId) {
-        try (Connection connection = DatabaseConnectionFactory.getConnection()){
+        try (Connection connection = this.connection.getConnection()){
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_TRANSACTION);
             preparedStatement.setString(1, TransactionId);
             preparedStatement.executeUpdate();

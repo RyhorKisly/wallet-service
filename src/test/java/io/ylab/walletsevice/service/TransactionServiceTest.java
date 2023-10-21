@@ -10,12 +10,13 @@ import io.ylab.walletservice.dao.UserDao;
 import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
 import io.ylab.walletservice.dao.entity.UserEntity;
+import io.ylab.walletservice.service.AuditService;
 import io.ylab.walletservice.service.TransactionService;
-import io.ylab.walletservice.service.factory.TransactionServiceFactory;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import io.ylab.walletsevice.dao.ds.factory.ConnectionWrapperFactoryTest;
+import io.ylab.walletsevice.dao.utils.api.ILiquibaseManagerTest;
+import io.ylab.walletsevice.dao.utils.factory.LiquibaseManagerTestFactory;
+import io.ylab.walletsevice.testcontainers.config.ContainersEnvironment;
+import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,21 +25,32 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
-public class TransactionServiceTest {
-    private TransactionService transactionService;
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class TransactionServiceTest extends ContainersEnvironment {
     private UserDao userDao;
-    private AuditDao auditDao;
     private AccountDao accountDao;
     private TransactionDao transactionDao;
+    private TransactionService transactionService;
+    private ILiquibaseManagerTest liquibaseManagerTest;
 
-    @BeforeEach
+    @BeforeAll
     @DisplayName("Initialize classes for tests")
     public void setUp() {
-        transactionService = (TransactionService) TransactionServiceFactory.getInstance();
-        userDao = new UserDao();
-        auditDao = new AuditDao();
-        accountDao = new AccountDao();
-        transactionDao = new TransactionDao();
+        userDao = new UserDao(ConnectionWrapperFactoryTest.getInstance());
+        accountDao = new AccountDao(ConnectionWrapperFactoryTest.getInstance());
+        transactionDao = new TransactionDao(ConnectionWrapperFactoryTest.getInstance());
+        AuditDao auditDao = new AuditDao(ConnectionWrapperFactoryTest.getInstance());
+        AuditService auditService = new AuditService(auditDao);
+        transactionService = new TransactionService(transactionDao, auditService);
+
+        liquibaseManagerTest = LiquibaseManagerTestFactory.getInstance();
+        liquibaseManagerTest.migrateDbCreate();
+    }
+
+    @AfterEach
+    @DisplayName("Migrates dates to drop schema and tables")
+    public void drop() {
+        this.liquibaseManagerTest.migrateDbDrop();
     }
 
     @Test
@@ -62,11 +74,6 @@ public class TransactionServiceTest {
                 savedAccountEntity.getId());
         TransactionEntity transactionEntity = transactionService.create(transactionDTO, savedUserEntity.getId());
 
-        auditDao.deleteByUserId(savedUserEntity.getId());
-        transactionDao.delete(transactionEntity.getTransactionId());
-        accountDao.delete(savedAccountEntity.getId());
-        userDao.delete(savedUserEntity.getId());
-
         Assertions.assertEquals(transactionDTO.getTransactionId(), transactionEntity.getTransactionId());
         Assertions.assertEquals(transactionDTO.getSumOfTransaction(), transactionEntity.getSumOfTransaction());
         Assertions.assertEquals(transactionDTO.getOperation(), transactionEntity.getOperation());
@@ -76,9 +83,16 @@ public class TransactionServiceTest {
     @Test
     @DisplayName("Test for getting transaction by id")
     void getById() {
-        UserEntity savedUserEntity = userDao.find("admin");
-        AccountEntity savedAccountEntity = accountDao.find("admin");
+        UserEntity userEntity = new UserEntity();
+        userEntity.setLogin("Have never been created transaction CreateTestAudit");
+        userEntity.setPassword("1tset");
+        userEntity.setRole(UserRole.USER);
+        UserEntity savedUserEntity = userDao.save(userEntity);
 
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setUserId(savedUserEntity.getId());
+        accountEntity.setBalance(new BigDecimal("0.0"));
+        AccountEntity savedAccountEntity = accountDao.save(accountEntity);
 
         TransactionDTO transactionDTO = new TransactionDTO(
                 UUID.randomUUID().toString(),
@@ -88,8 +102,6 @@ public class TransactionServiceTest {
 
         TransactionEntity createdEntity = transactionService.create(transactionDTO, savedUserEntity.getId());
         TransactionEntity foundEntity = transactionService.get(createdEntity.getTransactionId());
-
-        transactionDao.delete(createdEntity.getTransactionId());
 
         Assertions.assertEquals(createdEntity, foundEntity);
     }
@@ -128,21 +140,22 @@ public class TransactionServiceTest {
 
         Set<TransactionEntity> savedTransactions = transactionService.get(savedAccountEntity);
 
-        auditDao.deleteByUserId(savedUserEntity.getId());
-        transactionDao.delete(createdEntity1.getTransactionId());
-        transactionDao.delete(createdEntity2.getTransactionId());
-        accountDao.delete(savedAccountEntity.getId());
-        userDao.delete(savedUserEntity.getId());
-
         Assertions.assertEquals(transactions, savedTransactions);
     }
 
     @Test
     @DisplayName("Test for finding transaction by id with return value as boolean")
     void isExistTest() {
-        UserEntity userEntity = userDao.find("admin");
+        UserEntity userEntity = new UserEntity();
+        userEntity.setLogin("Have never been created transaction CreateTestAudit");
+        userEntity.setPassword("1tset");
+        userEntity.setRole(UserRole.USER);
+        UserEntity savedUserEntity = userDao.save(userEntity);
 
-        AccountEntity savedAccountEntity = accountDao.find(userEntity.getLogin());
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setUserId(savedUserEntity.getId());
+        accountEntity.setBalance(new BigDecimal("0.0"));
+        AccountEntity savedAccountEntity = accountDao.save(accountEntity);
 
         TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setTransactionId(UUID.randomUUID().toString());
@@ -153,8 +166,6 @@ public class TransactionServiceTest {
         TransactionEntity savedTransactionEntity = transactionDao.save(transactionEntity);
 
         Assertions.assertTrue(transactionService.isExist(savedTransactionEntity.getTransactionId()));
-
-        transactionDao.delete(savedTransactionEntity.getTransactionId());
     }
 
 
