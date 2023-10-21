@@ -63,11 +63,6 @@ public class UserDao implements IUserDao {
     private static final String SAVE_USER = "INSERT INTO app.\"User\"(login, password, role) VALUES (?, ?, ?) RETURNING id;";
 
     /**
-     * Query for delete user form db
-     */
-    private static final String DELETE_USER = "DELETE FROM app.\"User\" WHERE id = ?;";
-
-    /**
      * define a field with a type {@link IConnectionWrapper} for further aggregation
      */
     private final IConnectionWrapper connection;

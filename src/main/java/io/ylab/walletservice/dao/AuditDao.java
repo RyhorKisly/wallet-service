@@ -60,17 +60,6 @@ public class AuditDao implements IAuditDao {
             "RETURNING id;";
 
     /**
-     * Query for deleting audit
-     */
-    private static final String DELETE_AUDIT = "DELETE FROM app.\"Audit\" WHERE id = ?;";
-
-    /**
-     * Query for deleting audit by user login
-     */
-    private static final String DELETE_AUDIT_BY_LOGIN = "DELETE FROM app.\"Audit\" " +
-            "WHERE user_id = ?;";
-
-    /**
      * define a field with a type {@link IConnectionWrapper} for further aggregation
      */
     private final IConnectionWrapper connection;

@@ -79,11 +79,6 @@ public class AccountDao implements IAccountDao {
     private static final String UPDATE_ACCOUNT = "UPDATE app.\"Account\" SET balance = ? WHERE id = ?;";
 
     /**
-     * Query for deleting account
-     */
-    private static final String DELETE_ACCOUNT = "DELETE FROM app.\"Account\" WHERE id = ?;";
-
-    /**
      * define a field with a type {@link IConnectionWrapper} for further aggregation
      */
     private final IConnectionWrapper connection;

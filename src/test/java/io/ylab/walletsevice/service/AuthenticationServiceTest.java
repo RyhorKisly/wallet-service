@@ -64,9 +64,6 @@ public class AuthenticationServiceTest extends ContainersEnvironment {
         UserEntity createdEntity = userService.create(userCreateDTO);
         UserEntity authorizedEntity = authenticationService.authorize(userLoginDTO);
 
-        auditDao.deleteByUserId(createdEntity.getId());
-        userDao.delete(createdEntity.getId());
-
         Assertions.assertEquals(createdEntity, authorizedEntity);
     }
 

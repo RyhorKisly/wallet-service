@@ -30,7 +30,7 @@ public class DatabaseConnection implements IConnectionWrapper {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
 
     }
 }

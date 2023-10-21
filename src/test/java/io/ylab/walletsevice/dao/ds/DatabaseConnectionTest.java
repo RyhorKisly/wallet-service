@@ -34,7 +34,7 @@ public class DatabaseConnectionTest implements IConnectionWrapper {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
 
     }
 }

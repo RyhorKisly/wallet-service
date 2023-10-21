@@ -76,7 +76,7 @@ class AccountServiceTest extends ContainersEnvironment {
         UserEntity savedEntity = userDao.save(userEntity);
 
         AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setUserId(userEntity.getId());
+        accountEntity.setUserId(savedEntity.getId());
         accountEntity.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
         AccountEntity foundAccountEntity = accountService.get(savedAccountEntity.getId());
@@ -94,7 +94,7 @@ class AccountServiceTest extends ContainersEnvironment {
         UserEntity savedEntity = userDao.save(userEntity);
 
         AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setUserId(userEntity.getId());
+        accountEntity.setUserId(savedEntity.getId());
         accountEntity.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
         AccountEntity foundAccountEntity = accountService.get(savedAccountEntity.getId(), userEntity.getLogin());
@@ -112,7 +112,7 @@ class AccountServiceTest extends ContainersEnvironment {
         UserEntity savedEntity = userDao.save(userEntity);
 
         AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setUserId(userEntity.getId());
+        accountEntity.setUserId(savedEntity.getId());
         accountEntity.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
         AccountEntity foundAccountEntity = accountService.get(userEntity.getLogin());

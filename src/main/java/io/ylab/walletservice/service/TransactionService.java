@@ -1,6 +1,5 @@
 package io.ylab.walletservice.service;
 
-import io.ylab.walletservice.core.dto.UserDTO;
 import io.ylab.walletservice.core.enums.Operation;
 import io.ylab.walletservice.core.dto.AuditDTO;
 import io.ylab.walletservice.core.dto.TransactionDTO;

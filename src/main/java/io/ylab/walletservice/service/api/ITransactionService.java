@@ -1,7 +1,6 @@
 package io.ylab.walletservice.service.api;
 
 import io.ylab.walletservice.core.dto.TransactionDTO;
-import io.ylab.walletservice.core.dto.UserDTO;
 import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
 

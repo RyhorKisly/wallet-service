@@ -73,11 +73,6 @@ public class TransactionDao implements ITransactionDao {
             "ORDER BY dt_create;";
 
     /**
-     * Query for deleting transaction
-     */
-    private static final String DELETE_TRANSACTION = "DELETE FROM app.\"Transaction\" WHERE id = ?;";
-
-    /**
      * define a field with a type {@link IConnectionWrapper} for further aggregation
      */
     private final IConnectionWrapper connection;

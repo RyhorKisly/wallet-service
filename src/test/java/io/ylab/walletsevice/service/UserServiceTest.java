@@ -34,8 +34,6 @@ public class UserServiceTest extends ContainersEnvironment {
         UserCreateDTO userCreateDTO = new UserCreateDTO("test5", UserRole.USER, "5tset");
         UserEntity createdEntity = userService.create(userCreateDTO);
 
-        userDao.delete(createdEntity.getId());
-
         Assertions.assertEquals(userCreateDTO.getLogin(), createdEntity.getLogin());
         Assertions.assertEquals(userCreateDTO.getRole(), createdEntity.getRole());
         Assertions.assertEquals(userCreateDTO.getPassword(), createdEntity.getPassword());
@@ -48,9 +46,6 @@ public class UserServiceTest extends ContainersEnvironment {
         UserEntity createdEntity = userService.create(userCreateDTO);
 
         UserEntity getEntity = userService.get(userCreateDTO.getLogin());
-
-        userDao.delete(createdEntity.getId());
-
 
         Assertions.assertEquals(createdEntity, getEntity);
     }
