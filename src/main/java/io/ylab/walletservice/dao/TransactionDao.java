@@ -1,6 +1,9 @@
 package io.ylab.walletservice.dao;
 
+import io.ylab.walletservice.aop.annotations.Auditable;
+import io.ylab.walletservice.aop.annotations.Loggable;
 import io.ylab.walletservice.core.enums.Operation;
+import io.ylab.walletservice.core.exceptions.NotUniqueException;
 import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 import io.ylab.walletservice.dao.api.ITransactionDao;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
@@ -19,6 +22,8 @@ import java.util.Set;
  * This an implementation of {@link ITransactionDao}
  */
 @RequiredArgsConstructor
+@Loggable
+@Auditable
 public class TransactionDao implements ITransactionDao {
 
     /**
@@ -52,6 +57,17 @@ public class TransactionDao implements ITransactionDao {
     private static final String ERROR_CONNECTION = "Error connecting to database";
 
     /**
+     * Message when try save user with existed id of transaction
+     */
+    private static final String TRANSACTION_ID_EXIST = "Such transaction id exist";
+
+    /**
+     * Name of constraint
+     */
+    private static final String TRANSACTION_ID_PKEY= "Transaction_pkey";
+
+
+    /**
      * Query for finding transaction by id
      */
     private static final String FIND_TRANSACTION = "SELECT id, operation, sum_of_transaction, account_id, dt_create " +
@@ -71,6 +87,11 @@ public class TransactionDao implements ITransactionDao {
             "FROM app.\"Transaction\" " +
             "WHERE account_id = ? " +
             "ORDER BY dt_create;";
+
+    /**
+     * Query for deleting transaction
+     */
+    private static final String DELETE_TRANSACTION = "DELETE FROM app.\"Transaction\" WHERE id = ?;";
 
     /**
      * define a field with a type {@link IConnectionWrapper} for further aggregation
@@ -156,6 +177,9 @@ public class TransactionDao implements ITransactionDao {
             ps.execute();
 
         } catch (SQLException e) {
+            if(e.getMessage().contains(TRANSACTION_ID_PKEY)) {
+                throw new NotUniqueException(TRANSACTION_ID_EXIST, e);
+            }
             throw new RuntimeException(ERROR_CONNECTION, e);
         }
         return entity;
@@ -189,4 +213,16 @@ public class TransactionDao implements ITransactionDao {
         return historyOfTransactions;
     }
 
+    @Override
+    public void delete(String TransactionId) {
+        try (Connection connection = this.connection.getConnection()){
+            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_TRANSACTION);
+            preparedStatement.setString(1, TransactionId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(ERROR_CONNECTION, e);
+        }
+    }
 }
+
+

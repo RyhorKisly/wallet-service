@@ -1,5 +1,7 @@
 package io.ylab.walletservice.dao;
 
+import io.ylab.walletservice.aop.annotations.Auditable;
+import io.ylab.walletservice.aop.annotations.Loggable;
 import io.ylab.walletservice.dao.api.IAccountDao;
 import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 import io.ylab.walletservice.dao.entity.AccountEntity;
@@ -15,6 +17,8 @@ import java.sql.SQLException;
  * This an implementation of {@link IAccountDao}
  */
 @RequiredArgsConstructor
+@Loggable
+@Auditable
 public class AccountDao implements IAccountDao {
 
     /**
@@ -50,7 +54,7 @@ public class AccountDao implements IAccountDao {
     /**
      * Query for finding account by id
      */
-    private static final String FIND_ACCOUNT_BY_ID = "SELECT id, balance, user_id FROM app.\"Account\" WHERE id = ?;";
+    private static final String FIND_ACCOUNT_BY_ACCOUNT_ID = "SELECT id, balance, user_id FROM app.\"Account\" WHERE id = ?;";
 
     /**
      * Query for finding account by id and login
@@ -63,10 +67,9 @@ public class AccountDao implements IAccountDao {
     /**
      * Query for finding account by login
      */
-    private static final String FIND_ACCOUNT_BY_LOGIN = "SELECT app.\"Account\".id, balance, user_id " +
+    private static final String FIND_ACCOUNT_BY_USER_ID = "SELECT app.\"Account\".id, balance, user_id " +
             "FROM app.\"Account\" " +
-            "INNER JOIN app.\"User\" ON app.\"Account\".user_id = app.\"User\".id " +
-            "WHERE login = ?;";
+            "WHERE user_id = ?;";
 
     /**
      * Query for saving account
@@ -92,7 +95,7 @@ public class AccountDao implements IAccountDao {
     public AccountEntity find(Long numberAccount) {
         AccountEntity accountEntity = null;
         try (Connection conn =  this.connection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(FIND_ACCOUNT_BY_ID)) {
+             PreparedStatement ps = conn.prepareStatement(FIND_ACCOUNT_BY_ACCOUNT_ID)) {
             ps.setObject(1, numberAccount);
             try(ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -135,17 +138,12 @@ public class AccountDao implements IAccountDao {
         return accountEntity;
     }
 
-    /**
-     * find entity by number of the account and login of the user
-     * @param login find entity by user login
-     * @return entity from {@code accounts}
-     */
     @Override
-    public AccountEntity find(String login) {
+    public AccountEntity findByUserId(Long userId) {
         AccountEntity accountEntity = null;
         try (Connection conn =  this.connection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(FIND_ACCOUNT_BY_LOGIN)) {
-            ps.setObject(1, login);
+             PreparedStatement ps = conn.prepareStatement(FIND_ACCOUNT_BY_USER_ID)) {
+            ps.setObject(1, userId);
             try(ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     accountEntity = new AccountEntity();

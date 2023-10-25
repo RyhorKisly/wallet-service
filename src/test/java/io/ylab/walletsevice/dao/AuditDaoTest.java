@@ -61,13 +61,11 @@ public class AuditDaoTest extends ContainersEnvironment {
         UserEntity savedUserEntity = userDao.save(userEntity);
 
         AuditEntity auditEntity = new AuditEntity();
-        auditEntity.setUserId(savedUserEntity.getId());
         auditEntity.setDtCreate(LocalDateTime.now());
         auditEntity.setText("test");
         AuditEntity savedAuditEntity = auditDao.save(auditEntity);
 
         assertEquals(auditEntity.getText(), savedAuditEntity.getText());
-        assertEquals(auditEntity.getUserId(), savedAuditEntity.getUserId());
         assertEquals(auditEntity.getDtCreate(), savedAuditEntity.getDtCreate());
     }
 }

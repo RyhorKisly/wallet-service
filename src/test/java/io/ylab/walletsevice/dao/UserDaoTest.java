@@ -1,6 +1,7 @@
 package io.ylab.walletsevice.dao;
 
 import io.ylab.walletservice.core.enums.UserRole;
+import io.ylab.walletservice.core.exceptions.NotUniqueException;
 import io.ylab.walletservice.dao.UserDao;
 import io.ylab.walletservice.dao.api.IUserDao;
 import io.ylab.walletservice.dao.entity.UserEntity;
@@ -66,9 +67,8 @@ public class UserDaoTest extends ContainersEnvironment {
         userEntity.setRole(UserRole.USER);
 
         userDao.save(userEntity);
-        UserEntity checkEntity = userDao.save(userEntity);
 
-        Assertions.assertNull(checkEntity.getId());
+        Assertions.assertThrows(NotUniqueException.class, () -> userDao.save(userEntity));
     }
 
     @Test
@@ -83,6 +83,32 @@ public class UserDaoTest extends ContainersEnvironment {
         UserEntity foundEntity = userDao.find(savedEntity.getLogin());
 
         assertEquals(savedEntity, foundEntity);
+    }
+
+    @Test
+    @DisplayName("Negative test for finding user by login")
+    void findByLoginNotExistUserTest() {
+        Assertions.assertNull(userDao.find("test"));
+    }
+
+    @Test
+    @DisplayName("Positive test for finding user by id")
+    void findByIdTest() {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setLogin("test1 it's better not create user with this name");
+        userEntity.setPassword("test");
+        userEntity.setRole(UserRole.USER);
+
+        UserEntity savedEntity = userDao.save(userEntity);
+        UserEntity foundEntity = userDao.find(savedEntity.getId());
+
+        assertEquals(savedEntity, foundEntity);
+    }
+
+    @Test
+    @DisplayName("Negative test for finding user by id")
+    void findByIdNotExistUserTest() {
+        Assertions.assertNull(userDao.find(10L));
     }
 
     @Test

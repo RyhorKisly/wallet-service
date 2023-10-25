@@ -10,11 +10,10 @@ import java.util.Set;
 public interface IAuditDao {
 
     /**
-     * find set of entities by login of the user
-     * @param login find entity by user login
+     * Find set of entities by id of the user
      * @return set of entities from storage
      */
-    Set<AuditEntity> findAllByLoginAscByDTCreate(String login);
+    Set<AuditEntity> findAllAscByDTCreate();
 
     /**
      * Saves a given entity.

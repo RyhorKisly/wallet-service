@@ -23,11 +23,11 @@ public interface IAccountDao {
     AccountEntity find(Long numberAccount, String login);
 
     /**
-     * find entity by number of the account and login of the user
-     * @param login find entity by user login
+     * find entity by number of the account and id of the user
+     * @param userId find entity by user id
      * @return entity from storage
      */
-    AccountEntity find(String login);
+    AccountEntity findByUserId(Long userId);
 
     /**
      * Saves a given entity.

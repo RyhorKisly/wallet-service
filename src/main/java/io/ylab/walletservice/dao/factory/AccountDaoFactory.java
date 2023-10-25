@@ -1,7 +1,7 @@
 package io.ylab.walletservice.dao.factory;
 
-import io.ylab.walletservice.dao.api.IAccountDao;
 import io.ylab.walletservice.dao.AccountDao;
+import io.ylab.walletservice.dao.api.IAccountDao;
 import io.ylab.walletservice.dao.ds.factory.ConnectionWrapperFactory;
 
 /**

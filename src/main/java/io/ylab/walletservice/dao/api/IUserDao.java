@@ -15,6 +15,14 @@ public interface IUserDao {
     UserEntity find(String login);
 
     /**
+     * find entity by id
+     * @param id find entity by id
+     * @return entity from storage
+     */
+    UserEntity find(Long id);
+
+
+    /**
      * Saves a given entity.
      * Use the returned instance for further operations as the save operation
      * might have changed the entity instance completely.

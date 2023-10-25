@@ -119,7 +119,7 @@ public class AccountDaoTest extends ContainersEnvironment {
     @DisplayName("Positive test for finding account by id and login")
     void findByIdAndLoginTest() {
         UserEntity userEntity = new UserEntity();
-        userEntity.setLogin("Have never been created account test1");
+        userEntity.setLogin("Have never been created account test1234");
         userEntity.setPassword("test");
         userEntity.setRole(UserRole.USER);
         UserEntity savedEntity = userDao.save(userEntity);
@@ -143,7 +143,7 @@ public class AccountDaoTest extends ContainersEnvironment {
     @DisplayName("Positive test for finding account by login")
     void findByLoginTest() {
         UserEntity userEntity = new UserEntity();
-        userEntity.setLogin("Have never been created account test1");
+        userEntity.setLogin("Have never been created account test123");
         userEntity.setPassword("test");
         userEntity.setRole(UserRole.USER);
         UserEntity savedEntity = userDao.save(userEntity);
@@ -152,7 +152,7 @@ public class AccountDaoTest extends ContainersEnvironment {
         accountEntity.setUserId(savedEntity.getId());
         accountEntity.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
-        AccountEntity foundAccountEntity = accountDao.find(userEntity.getLogin());
+        AccountEntity foundAccountEntity = accountDao.findByUserId(userEntity.getId());
 
         Assertions.assertEquals(savedAccountEntity, foundAccountEntity);
     }
@@ -160,7 +160,7 @@ public class AccountDaoTest extends ContainersEnvironment {
     @Test
     @DisplayName("Negative test for checking null when login does not exist")
     void findByLoginNonExistentAccountTest() {
-        Assertions.assertNull(accountDao.find( "Have never been created user)"));
+        Assertions.assertNull(accountDao.find( 34534L));
     }
 
     @Test
