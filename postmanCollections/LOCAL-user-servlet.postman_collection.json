@@ -1,0 +1,82 @@
+{
+	"info": {
+		"_postman_id": "98a0187f-b80d-433a-a35e-504ec3410c80",
+		"name": "LOCAL-user-servlet",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "26695165",
+		"_collection_link": "https://blue-astronaut-753448.postman.co/workspace/wallet-service~126d125f-834c-427a-9754-ffdf2eed10c2/collection/26695165-98a0187f-b80d-433a-a35e-504ec3410c80?action=share&source=collection_link&creator=26695165"
+	},
+	"item": [
+		{
+			"name": "get User",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJVc2VyIjp7ImlkIjoxLCJsb2dpbiI6ImFkbWluIiwicm9sZSI6IkFETUlOIn0sInN1YiI6ImFkbWluIiwiaXNzIjoiR3JpZ29yaXkiLCJpYXQiOjE2OTgyNDIzNjUsImV4cCI6MTY5ODg0NzE2NX0.AGKtmDZVTS2mXEKRL9jmY19I_AXj3oq10I1NHFpjOMKKdDFLVchlh-9fQJAnK4tSRNYWQwUwFgEv0cfiCiNmTw"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/wallet-service/users?id=25",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"wallet-service",
+						"users"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "25"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "save User",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJVc2VyIjp7ImlkIjoxLCJsb2dpbiI6ImFkbWluIiwicm9sZSI6IkFETUlOIn0sInN1YiI6ImFkbWluIiwiaXNzIjoiR3JpZ29yaXkiLCJpYXQiOjE2OTgyNDIzNjUsImV4cCI6MTY5ODg0NzE2NX0.AGKtmDZVTS2mXEKRL9jmY19I_AXj3oq10I1NHFpjOMKKdDFLVchlh-9fQJAnK4tSRNYWQwUwFgEv0cfiCiNmTw"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"login\": \"test2\",\n    \"password\": \"test2\",\n    \"role\": \"USER\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/wallet-service/users"
+			},
+			"response": []
+		},
+		{
+			"name": "me",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJVc2VyIjp7ImlkIjoxLCJsb2dpbiI6ImFkbWluIiwicm9sZSI6IkFETUlOIn0sInN1YiI6ImFkbWluIiwiaXNzIjoiR3JpZ29yaXkiLCJpYXQiOjE2OTgyNDIzNjUsImV4cCI6MTY5ODg0NzE2NX0.AGKtmDZVTS2mXEKRL9jmY19I_AXj3oq10I1NHFpjOMKKdDFLVchlh-9fQJAnK4tSRNYWQwUwFgEv0cfiCiNmTw"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8081/wallet-service/users/me"
+			},
+			"response": []
+		}
+	]
+}
