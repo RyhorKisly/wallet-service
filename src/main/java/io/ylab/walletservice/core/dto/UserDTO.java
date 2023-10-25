@@ -27,5 +27,5 @@ public class UserDTO {
     /**
      * Enum type for description the role of user
      */
-    private UserRole userRole;
+    private UserRole role;
 }
