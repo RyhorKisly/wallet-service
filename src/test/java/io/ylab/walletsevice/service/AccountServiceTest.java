@@ -54,9 +54,8 @@ class AccountServiceTest extends ContainersEnvironment {
         this.accountDao = new AccountDao(ConnectionWrapperFactoryTest.getInstance());
         AuditDao auditDao = new AuditDao(ConnectionWrapperFactoryTest.getInstance());
         UserService userService = new UserService(userDao);
-        AuditService auditService = new AuditService(auditDao);
 
-        this.accountService = new AccountService(accountDao, auditService, userService);
+        this.accountService = new AccountService(accountDao, userService);
         liquibaseManagerTest = LiquibaseManagerTestFactory.getInstance();
         liquibaseManagerTest.migrateDbCreate();
     }
@@ -77,7 +76,7 @@ class AccountServiceTest extends ContainersEnvironment {
         UserEntity savedUserEntity = userDao.save(userEntity);
 
         AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setLogin(userEntity.getLogin());
+        accountDTO.setId(userEntity.getId());
         accountDTO.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountService.create(accountDTO);
 
@@ -134,7 +133,7 @@ class AccountServiceTest extends ContainersEnvironment {
         accountEntity.setUserId(savedEntity.getId());
         accountEntity.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
-        AccountEntity foundAccountEntity = accountService.get(userEntity.getLogin());
+        AccountEntity foundAccountEntity = accountService.get(userEntity.getId());
 
         Assertions.assertEquals(savedAccountEntity, foundAccountEntity);
     }

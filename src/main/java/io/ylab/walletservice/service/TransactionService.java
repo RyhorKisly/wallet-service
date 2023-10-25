@@ -1,11 +1,13 @@
 package io.ylab.walletservice.service;
 
-import io.ylab.walletservice.core.enums.Operation;
-import io.ylab.walletservice.core.dto.AuditDTO;
+import io.ylab.walletservice.aop.annotations.Loggable;
 import io.ylab.walletservice.core.dto.TransactionDTO;
+import io.ylab.walletservice.core.exceptions.TransactionFailedException;
+import io.ylab.walletservice.core.exceptions.WrongAccountIdException;
 import io.ylab.walletservice.dao.api.ITransactionDao;
 import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
+import io.ylab.walletservice.service.api.IAccountService;
 import io.ylab.walletservice.service.api.IAuditService;
 import io.ylab.walletservice.service.api.ITransactionService;
 import lombok.RequiredArgsConstructor;
@@ -19,27 +21,26 @@ import java.util.Set;
  * This an implementation of {@link ITransactionService}
  */
 @RequiredArgsConstructor
+@Loggable
 public class TransactionService implements ITransactionService {
 
     /**
-     * Save text in audit when type of transaction was created.
+     * Message when can't update account because of wrong sum of transaction.
      */
-    private static final String TRANSACTION_CREATED = "%s transaction was created";
+    private static final String TRANSACTION_FAILED = "Transaction failed, change sum of transaction";
 
     /**
-     * Save text in audit when user request history of transaction.
+     * Message if account does not belong to user
      */
-    private static final String REQUEST_HISTORY = "User requested transaction history";
+    private static final String WRONG_NUMBER_ACCOUNT = "This account number does not belong to you. Enter a different number.";
 
     /**
      * define a field with a type {@link ITransactionDao} for further aggregation
      */
     private final ITransactionDao transactionDao;
 
-    /**
-     * define a field with a type {@link IAuditService} for further aggregation
-     */
-    private final IAuditService auditService;
+    private final static String WRONG_ACCOUNT = "Wrong account id";
+    private final IAccountService accountService;
 
     /**
      * Create entity.
@@ -51,55 +52,49 @@ public class TransactionService implements ITransactionService {
      */
     @Override
     public TransactionEntity create(TransactionDTO dto, Long userId) {
+        AccountEntity accountEntity = accountService.get(userId);
+
+        if(accountEntity == null) {
+            throw new WrongAccountIdException(WRONG_ACCOUNT);
+        }
+
         TransactionEntity entity = new TransactionEntity(
                 dto.getTransactionId(),
                 dto.getOperation(),
                 dto.getSumOfTransaction(),
-                dto.getNumberAccount(),
+                dto.getAccountId(),
                 LocalDateTime.now()
         );
-        for (Operation value : Operation.values()) {
-            if(dto.getOperation().equals(value)) {
-                AuditDTO auditDTO = new AuditDTO(
-                userId, String.format(TRANSACTION_CREATED, dto.getOperation()));
-                auditService.create(auditDTO);
-            }
+
+        entity = transactionDao.save(entity);
+
+        if (accountService.updateBalance(dto.getAccountId(), dto) == null) {
+            transactionDao.delete(entity.getTransactionId());
+            throw new TransactionFailedException(TRANSACTION_FAILED);
         }
-        return transactionDao.save(entity);
+
+        return entity;
     }
 
-    /**
-     * get entity by ID
-     * @param transactionID get entity by ID
-     * @return entity for farther interaction with app
-     */
     @Override
     public TransactionEntity get(String transactionID) {
         return transactionDao.find(transactionID);
     }
 
-    /**
-     * get set of entities by number of an account
-     * @param entity get entity by number of an account
-     * @return set of entities for farther interaction
-     */
     @Override
-    public Set<TransactionEntity> get(AccountEntity entity) {
-        Set<TransactionEntity> transactions =
-                transactionDao.findAllByNumberAccountAscByDTCreate(entity.getId());
+    public Set<TransactionEntity> get(Long accountId, Long UserId) {
 
-        AuditDTO auditDTO = new AuditDTO(
-                entity.getUserId(), REQUEST_HISTORY);
-        auditService.create(auditDTO);
+        AccountEntity accountEntity = accountService.getByUser(UserId);
+        if(accountEntity == null) {
+            throw new WrongAccountIdException(WRONG_NUMBER_ACCOUNT);
+        }
+        if(!accountId.equals(accountEntity.getId())) {
+            throw new WrongAccountIdException(WRONG_NUMBER_ACCOUNT);
+        }
 
-        return transactions;
+        return transactionDao.findAllByNumberAccountAscByDTCreate(accountId);
     }
 
-    /**
-     * Return true if transaction with ID exists
-     * @param transactionalID find entity by ID
-     * @return true if transaction with ID exists
-     */
     @Override
     public boolean isExist(String transactionalID) {
         return transactionDao.isExist(transactionalID);

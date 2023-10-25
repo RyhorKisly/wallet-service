@@ -43,10 +43,10 @@ public class UserServiceTest extends ContainersEnvironment {
     }
 
     @Test
-    @DisplayName("Test for creating user")
+    @DisplayName("Positive test for creating user")
     void createTest() {
         UserCreateDTO userCreateDTO = new UserCreateDTO("test5", UserRole.USER, "test5");
-        UserEntity createdEntity = userService.create(userCreateDTO);
+        UserEntity createdEntity = userService.createByUser(userCreateDTO);
 
         Assertions.assertEquals(userCreateDTO.getLogin(), createdEntity.getLogin());
         Assertions.assertEquals(userCreateDTO.getRole(), createdEntity.getRole());
@@ -54,14 +54,37 @@ public class UserServiceTest extends ContainersEnvironment {
     }
 
     @Test
-    @DisplayName("Test for getting user by login")
-    void getTest() {
+    @DisplayName("Positive test for getting user by login")
+    void getByLoginTest() {
         UserCreateDTO userCreateDTO = new UserCreateDTO("test6", UserRole.USER, "test6");
-        UserEntity createdEntity = userService.create(userCreateDTO);
+        UserEntity createdEntity = userService.createByUser(userCreateDTO);
 
         UserEntity getEntity = userService.get(userCreateDTO.getLogin());
 
         Assertions.assertEquals(createdEntity, getEntity);
+    }
+
+    @Test
+    @DisplayName("Negative test for getting user by login")
+    void getByLoginNotExistTest() {
+        Assertions.assertNull(userService.get("test"));
+    }
+
+    @Test
+    @DisplayName("Positive test for getting user by id")
+    void getByIdTest() {
+        UserCreateDTO userCreateDTO = new UserCreateDTO("test6", UserRole.USER, "test6");
+        UserEntity createdEntity = userService.createByUser(userCreateDTO);
+
+        UserEntity getEntity = userService.get(createdEntity.getId());
+
+        Assertions.assertEquals(createdEntity, getEntity);
+    }
+
+    @Test
+    @DisplayName("Negative test for getting user by login")
+    void getByIdNotExistTest() {
+        Assertions.assertNull(userService.get(123L));
     }
 
 }

@@ -1,8 +1,8 @@
 package io.ylab.walletservice.service;
 
+import io.ylab.walletservice.aop.annotations.Loggable;
 import io.ylab.walletservice.core.enums.Operation;
 import io.ylab.walletservice.core.dto.AccountDTO;
-import io.ylab.walletservice.core.dto.AuditDTO;
 import io.ylab.walletservice.core.dto.TransactionDTO;
 import io.ylab.walletservice.dao.api.IAccountDao;
 import io.ylab.walletservice.dao.entity.AccountEntity;
@@ -13,6 +13,7 @@ import io.ylab.walletservice.service.api.IUserService;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * Class for generic operations on a service for an Account.
@@ -20,12 +21,8 @@ import java.math.BigDecimal;
  * This an implementation of {@link IAccountService}
  */
 @RequiredArgsConstructor
+@Loggable
 public class AccountService implements IAccountService {
-
-    /**
-     * Print in console that account was created
-     */
-    private static final String ACCOUNT_CREATED = "Account was created";
 
     /**
      * define a field with a type {@link IAccountDao} for further aggregation
@@ -33,9 +30,9 @@ public class AccountService implements IAccountService {
     private final IAccountDao accountDao;
 
     /**
-     * define a field with a type {@link IAuditService} for further aggregation
+     * define a field with a type {@link IUserService} for further aggregation
      */
-    private final IAuditService auditService;
+
     private final IUserService userService;
 
     /**
@@ -46,15 +43,12 @@ public class AccountService implements IAccountService {
      */
     @Override
     public AccountEntity create(AccountDTO accountDTO) {
-        UserEntity userEntity = userService.get(accountDTO.getLogin());
+        UserEntity userEntity = userService.get(accountDTO.getId());
         AccountEntity entity = new AccountEntity();
         entity.setBalance(new BigDecimal("0.0"));
         entity.setUserId(userEntity.getId());
 
-        AccountEntity accountEntity = accountDao.save(entity);
-        AuditDTO auditDTO = new AuditDTO(accountEntity.getUserId(), ACCOUNT_CREATED);
-        auditService.create(auditDTO);
-        return accountEntity;
+        return accountDao.save(entity);
     }
 
     /**
@@ -79,13 +73,13 @@ public class AccountService implements IAccountService {
     }
 
     /**
-     * get entity by number of the account and login of the user
-     * @param login get entity by user login
+     * get entity by number of the account and id of the user
+     * @param userId get entity by user id
      * @return entity for farther interaction with app
      */
     @Override
-    public AccountEntity get(String login) {
-        return accountDao.find(login);
+    public AccountEntity getByUser(Long userId) {
+        return accountDao.findByUserId(userId);
     }
 
 
@@ -95,7 +89,7 @@ public class AccountService implements IAccountService {
      * Check if credit or debit transaction. If debit - check whether sumOfTransact more than balance
      * @param numberAccount used to update account with this number
      * @param transactionDTO used for checking can the operation be performed
-     * @return the updated entity
+     * @return updated entity
      */
     @Override
     public AccountEntity updateBalance(Long numberAccount, TransactionDTO transactionDTO) {

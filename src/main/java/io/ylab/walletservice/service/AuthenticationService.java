@@ -1,11 +1,13 @@
 package io.ylab.walletservice.service;
 
-import io.ylab.walletservice.core.dto.AccountDTO;
-import io.ylab.walletservice.core.dto.AuditDTO;
-import io.ylab.walletservice.core.dto.UserCreateDTO;
-import io.ylab.walletservice.core.dto.UserLoginDTO;
+import io.ylab.walletservice.aop.annotations.Loggable;
+import io.ylab.walletservice.core.dto.*;
+import io.ylab.walletservice.core.exceptions.NotExistUserException;
+import io.ylab.walletservice.core.mappers.UserMapper;
+import io.ylab.walletservice.core.mappers.UserMapperImpl;
 import io.ylab.walletservice.dao.api.IAccountDao;
 import io.ylab.walletservice.dao.entity.UserEntity;
+import io.ylab.walletservice.in.utils.JWTTokenHandler;
 import io.ylab.walletservice.service.api.IAccountService;
 import io.ylab.walletservice.service.api.IAuditService;
 import io.ylab.walletservice.service.api.IUserAuthenticationService;
@@ -20,22 +22,13 @@ import java.math.BigDecimal;
  * This an implementation of {@link IUserAuthenticationService}
  */
 @RequiredArgsConstructor
+@Loggable
 public class AuthenticationService implements IUserAuthenticationService {
 
     /**
      * Print when user enter wrong data when try to authorize
      */
     private static final String WRONG_DATES = "Wrong login or password, try again";
-
-    /**
-     * Print when user registered successfully
-     */
-    private static final String USER_REGISTERED = "User Registered";
-
-    /**
-     * Print when user signed in successfully
-     */
-    private static final String USER_SIGNED = "User signed in";
 
     /**
      * define a field with a type {@link IUserService} for further aggregation
@@ -48,9 +41,14 @@ public class AuthenticationService implements IUserAuthenticationService {
     private final IAccountService accountService;
 
     /**
-     * define a field with a type {@link IAuditService} for further aggregation
+     * Initialize a field with a type {@link JWTTokenHandler} for using jwt token into class
      */
-    private final IAuditService auditService;
+    private final JWTTokenHandler handler = new JWTTokenHandler();
+
+    /**
+     * initialize a field with a type {@link UserMapper} for converting userDTO and entity
+     */
+    private final UserMapper userMapper = new UserMapperImpl();
 
     /**
      * Used to create user by registration
@@ -59,22 +57,16 @@ public class AuthenticationService implements IUserAuthenticationService {
      * @return {@link UserEntity}
      */
     @Override
-    public UserEntity register(UserCreateDTO dto) {
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setBalance(new BigDecimal("0.0"));
-        accountDTO.setLogin(dto.getLogin());
-
+    public UserEntity register(UserAuthenticationDTO dto) {
         String password = encodePassword(dto.getPassword());
         dto.setPassword(password);
-        UserEntity userEntity = userService.create(dto);
-        if(userEntity.getId() == null) {
-            return userEntity;
-        }
+        UserEntity userEntity = userService.createByRegistration(dto);
+
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setBalance(new BigDecimal("0.0"));
+        accountDTO.setId(userEntity.getId());
 
         accountService.create(accountDTO);
-
-        AuditDTO auditDTO = new AuditDTO(userEntity.getId(), USER_REGISTERED);
-        auditService.create(auditDTO);
 
         return userEntity;
     }
@@ -83,22 +75,21 @@ public class AuthenticationService implements IUserAuthenticationService {
      * Used to authorize user.
      * Check whether data correct or not.
      * @param dto used for authorization user
-     * @return {@link UserEntity}
+     * @return jwt token
+     * @throws NotExistUserException when user does not exist in db
      */
     @Override
-    public UserEntity authorize(UserLoginDTO dto) {
+    public String authorize(UserAuthenticationDTO dto) {
         UserEntity userEntity = userService.get(dto.getLogin());
         if (userEntity != null) {
             if(!userEntity.getPassword().equals(encodePassword(dto.getPassword()))) {
-                System.out.println(WRONG_DATES);
-                return null;
+                throw new NotExistUserException(WRONG_DATES);
             } else {
-                AuditDTO auditDTO = new AuditDTO(userEntity.getId(), USER_SIGNED);
-                auditService.create(auditDTO);
-                return userEntity;
+                UserDTO userDTO = userMapper.toDTO(userEntity);
+                return handler.generateUserAccessToken(userDTO, userDTO.getLogin());
             }
         } else {
-            return null;
+            throw new NotExistUserException(WRONG_DATES);
         }
     }
 

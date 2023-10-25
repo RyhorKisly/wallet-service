@@ -44,7 +44,7 @@ public class AuditServiceTest extends ContainersEnvironment {
      * Define a field with a type {@link ILiquibaseManagerTest} for further use in the test
      */
     private ILiquibaseManagerTest liquibaseManagerTest;
-
+//todo resolve errors in audit test dao
     @BeforeAll
     @DisplayName("Initialize classes for tests and call method for creating schema and tables in test db")
     public void setUp() {
@@ -74,12 +74,10 @@ public class AuditServiceTest extends ContainersEnvironment {
         AuditEntity auditEntity = new AuditEntity();
         auditEntity.setText("firstTestByUser");
         auditEntity.setDtCreate(LocalDateTime.now());
-        auditEntity.setUserId(savedUserEntity.getId());
 
         AuditEntity auditEntity2 = new AuditEntity();
         auditEntity2.setText("secondTestByUser");
         auditEntity2.setDtCreate(LocalDateTime.now());
-        auditEntity2.setUserId(savedUserEntity.getId());
 
         auditDao.save(auditEntity);
         auditDao.save(auditEntity2);
@@ -89,24 +87,17 @@ public class AuditServiceTest extends ContainersEnvironment {
         audits.add(auditEntity2);
 
 
-        Assertions.assertEquals(audits, auditService.getAllByLogin(savedUserEntity.getLogin()));
+        Assertions.assertEquals(audits, auditService.getAll());
     }
 
     @Test
     @DisplayName("Positive test for creating audit")
     void createTest() {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setLogin("Have never been created account test1");
-        userEntity.setPassword("1tset");
-        userEntity.setRole(UserRole.USER);
-        UserEntity savedUserEntity = userDao.save(userEntity);
-
-        AuditDTO auditDTO = new AuditDTO(savedUserEntity.getId(),"firstTestByAdmin");
+        AuditDTO auditDTO = new AuditDTO("firstTestByAdmin");
 
         AuditEntity entity = auditService.create(auditDTO);
 
         Assertions.assertEquals(auditDTO.getText(), entity.getText());
-        Assertions.assertEquals(auditDTO.getUserId(), entity.getUserId());
 
     }
 }

@@ -1,12 +1,13 @@
 package io.ylab.walletsevice.service;
 
 import io.ylab.walletservice.core.dto.UserCreateDTO;
-import io.ylab.walletservice.core.dto.UserLoginDTO;
+import io.ylab.walletservice.core.dto.UserAuthenticationDTO;
 import io.ylab.walletservice.core.enums.UserRole;
 import io.ylab.walletservice.dao.AccountDao;
 import io.ylab.walletservice.dao.AuditDao;
 import io.ylab.walletservice.dao.UserDao;
 import io.ylab.walletservice.dao.entity.UserEntity;
+import io.ylab.walletservice.in.utils.JWTTokenHandler;
 import io.ylab.walletservice.service.AccountService;
 import io.ylab.walletservice.service.AuditService;
 import io.ylab.walletservice.service.AuthenticationService;
@@ -42,12 +43,10 @@ public class AuthenticationServiceTest extends ContainersEnvironment {
     @DisplayName("Initialize classes for tests and call method for creating schema and tables in test db")
     public void setUp() {
         UserDao userDao = new UserDao(ConnectionWrapperFactoryTest.getInstance());
-        AuditDao auditDao = new AuditDao(ConnectionWrapperFactoryTest.getInstance());
         AccountDao accountDao = new AccountDao(ConnectionWrapperFactoryTest.getInstance());
         this.userService = new UserService(userDao);
-        AuditService auditService = new AuditService(auditDao);
-        AccountService accountService = new AccountService(accountDao, auditService, this.userService);
-        authenticationService = new AuthenticationService(this.userService, accountService, auditService);
+        AccountService accountService = new AccountService(accountDao, this.userService);
+        authenticationService = new AuthenticationService(this.userService, accountService);
 
         liquibaseManagerTest = LiquibaseManagerTestFactory.getInstance();
         liquibaseManagerTest.migrateDbCreate();
@@ -62,22 +61,25 @@ public class AuthenticationServiceTest extends ContainersEnvironment {
     @Test
     @DisplayName("Positive test for checking register user")
     void registerTest() {
-        UserCreateDTO userCreateDTO = new UserCreateDTO("test4", UserRole.USER, "test");
-        UserEntity registeredEntity = authenticationService.register(userCreateDTO);
+        UserAuthenticationDTO dto = new UserAuthenticationDTO("test4", "test");
+        UserEntity registeredEntity = authenticationService.register(dto);
 
-        Assertions.assertEquals(userCreateDTO.getLogin(), registeredEntity.getLogin());
+        Assertions.assertEquals(dto.getLogin(), registeredEntity.getLogin());
     }
 
 
     @Test
     @DisplayName("Positive test for checking authorisation user")
     void authorizeTest() {
-        UserLoginDTO userLoginDTO = new UserLoginDTO("test4", "test4");
         UserCreateDTO userCreateDTO = new UserCreateDTO("test4", UserRole.USER, "4tset");
-        UserEntity createdEntity = userService.create(userCreateDTO);
-        UserEntity authorizedEntity = authenticationService.authorize(userLoginDTO);
+        UserEntity createdEntity = userService.createByUser(userCreateDTO);
 
-        Assertions.assertEquals(createdEntity, authorizedEntity);
+        UserAuthenticationDTO userAuthenticationDTO = new UserAuthenticationDTO("test4", "test4");
+
+        //todo написать тест с токином
+        String token = authenticationService.authorize(userAuthenticationDTO);
+
+        Assertions.assertNotNull(token);
     }
 
 }

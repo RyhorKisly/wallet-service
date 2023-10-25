@@ -1,7 +1,6 @@
 package io.ylab.walletservice.service.api;
 
-import io.ylab.walletservice.core.dto.UserCreateDTO;
-import io.ylab.walletservice.core.dto.UserLoginDTO;
+import io.ylab.walletservice.core.dto.UserAuthenticationDTO;
 import io.ylab.walletservice.dao.entity.UserEntity;
 
 /**
@@ -11,15 +10,15 @@ public interface IUserAuthenticationService {
 
     /**
      * Used to create user by registration
-     * @param userCreateDTO used for registration user
+     * @param userAuthenticationDTO used for registration user
      * @return entity for farther interaction into app
      */
-    UserEntity register(UserCreateDTO userCreateDTO);
+    UserEntity register(UserAuthenticationDTO userAuthenticationDTO);
 
     /**
      * Used to authorize user.
-     * @param userLoginDTO used for authorization user
+     * @param userAuthenticationDTO used for authorization user
      * @return entity for farther interaction into app
      */
-    UserEntity authorize(UserLoginDTO userLoginDTO);
+    String authorize(UserAuthenticationDTO userAuthenticationDTO);
 }

@@ -13,8 +13,10 @@ import io.ylab.walletservice.dao.api.IUserDao;
 import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
 import io.ylab.walletservice.dao.entity.UserEntity;
+import io.ylab.walletservice.service.AccountService;
 import io.ylab.walletservice.service.AuditService;
 import io.ylab.walletservice.service.TransactionService;
+import io.ylab.walletservice.service.UserService;
 import io.ylab.walletservice.service.api.ITransactionService;
 import io.ylab.walletsevice.dao.ds.factory.ConnectionWrapperFactoryTest;
 import io.ylab.walletsevice.dao.utils.api.ILiquibaseManagerTest;
@@ -64,9 +66,9 @@ public class TransactionServiceTest extends ContainersEnvironment {
         userDao = new UserDao(ConnectionWrapperFactoryTest.getInstance());
         accountDao = new AccountDao(ConnectionWrapperFactoryTest.getInstance());
         transactionDao = new TransactionDao(ConnectionWrapperFactoryTest.getInstance());
-        AuditDao auditDao = new AuditDao(ConnectionWrapperFactoryTest.getInstance());
-        AuditService auditService = new AuditService(auditDao);
-        transactionService = new TransactionService(transactionDao, auditService);
+        UserService userService = new UserService(userDao);
+        AccountService accountService = new AccountService(accountDao, userService);
+        transactionService = new TransactionService(transactionDao, accountService);
 
         liquibaseManagerTest = LiquibaseManagerTestFactory.getInstance();
         liquibaseManagerTest.migrateDbCreate();
@@ -102,7 +104,7 @@ public class TransactionServiceTest extends ContainersEnvironment {
         Assertions.assertEquals(transactionDTO.getTransactionId(), transactionEntity.getTransactionId());
         Assertions.assertEquals(transactionDTO.getSumOfTransaction(), transactionEntity.getSumOfTransaction());
         Assertions.assertEquals(transactionDTO.getOperation(), transactionEntity.getOperation());
-        Assertions.assertEquals(transactionDTO.getNumberAccount(), transactionEntity.getAccountId());
+        Assertions.assertEquals(transactionDTO.getAccountId(), transactionEntity.getAccountId());
     }
 
     @Test
@@ -163,7 +165,7 @@ public class TransactionServiceTest extends ContainersEnvironment {
         transactions.add(createdEntity1);
         transactions.add(createdEntity2);
 
-        Set<TransactionEntity> savedTransactions = transactionService.get(savedAccountEntity);
+        Set<TransactionEntity> savedTransactions = transactionService.get(savedAccountEntity.getId(), savedAccountEntity.getUserId());
 
         Assertions.assertEquals(transactions, savedTransactions);
     }

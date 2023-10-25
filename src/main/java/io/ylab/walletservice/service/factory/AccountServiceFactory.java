@@ -32,7 +32,6 @@ public class AccountServiceFactory {
                 if(instance == null) {
                     instance = new AccountService(
                             AccountDaoFactory.getInstance(),
-                            AuditServiceFactory.getInstance(),
                             UserServiceFactory.getInstance()
                     );
                 }
