@@ -25,11 +25,6 @@ public class AuditEntity {
     private LocalDateTime dtCreate;
 
     /**
-     * Identifies that the account belongs to a specific user.
-     */
-    private Long userId;
-
-    /**
      * Message where we write specific action performed by the user.
      */
     private String text;
