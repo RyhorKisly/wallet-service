@@ -44,7 +44,7 @@ public class AuditServiceTest extends ContainersEnvironment {
      * Define a field with a type {@link ILiquibaseManagerTest} for further use in the test
      */
     private ILiquibaseManagerTest liquibaseManagerTest;
-//todo resolve errors in audit test dao
+
     @BeforeAll
     @DisplayName("Initialize classes for tests and call method for creating schema and tables in test db")
     public void setUp() {
