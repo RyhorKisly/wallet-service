@@ -9,8 +9,6 @@ services:
       POSTGRES_DB: wallet_service
       POSTGRES_USER: ylab
       POSTGRES_PASSWORD: ylab
-    volumes:
-      - ./postgresql/ddl/init_wallet_service_test.sql:/docker-entrypoint-initdb.d/init_wallet_service_test.sql
     ports:
       - 5433:5432
 
