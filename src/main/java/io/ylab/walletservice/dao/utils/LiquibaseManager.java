@@ -1,5 +1,6 @@
 package io.ylab.walletservice.dao.utils;
 
+import io.ylab.walletservice.aop.annotations.Loggable;
 import io.ylab.walletservice.core.conf.PropertiesLoader;
 import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 import liquibase.Liquibase;
@@ -13,6 +14,7 @@ import java.sql.Connection;
 import java.util.Properties;
 
 @RequiredArgsConstructor
+@Loggable
 public class LiquibaseManager {
 
     /**
