@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 /**
  * Mapper for Users
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface UserMapper {
 
     /**

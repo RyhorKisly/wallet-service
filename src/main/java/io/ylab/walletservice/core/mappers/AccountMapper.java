@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 /**
  * Mapper for Accounts
  */
-@Mapper
+@Mapper(componentModel = "spring")
 public interface AccountMapper {
 
     /**

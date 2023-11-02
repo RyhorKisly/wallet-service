@@ -5,7 +5,6 @@ import io.ylab.walletservice.core.enums.UserRole;
 import io.ylab.walletservice.core.mappers.UserMapper;
 import io.ylab.walletservice.core.mappers.UserMapperImpl;
 import io.ylab.walletservice.dao.entity.UserEntity;
-import io.ylab.walletsevice.testcontainers.config.ContainersEnvironment;
 import org.junit.jupiter.api.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
