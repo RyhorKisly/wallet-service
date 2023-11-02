@@ -13,29 +13,12 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": {
-						"token": "eyJhbGciOiJIUzUxMiJ9.eyJVc2VyIjp7ImlkIjoxLCJsb2dpbiI6ImFkbWluIiwicm9sZSI6IkFETUlOIn0sInN1YiI6ImFkbWluIiwiaXNzIjoiR3JpZ29yaXkiLCJpYXQiOjE2OTgyNDIzNjUsImV4cCI6MTY5ODg0NzE2NX0.AGKtmDZVTS2mXEKRL9jmY19I_AXj3oq10I1NHFpjOMKKdDFLVchlh-9fQJAnK4tSRNYWQwUwFgEv0cfiCiNmTw"
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJVc2VyIjp7ImlkIjoxLCJsb2dpbiI6ImFkbWluQGFkbWluLmFkbWluIiwicm9sZSI6IkFETUlOIn0sInN1YiI6ImFkbWluQGFkbWluLmFkbWluIiwiaXNzIjoiR3JpZ29yaXkiLCJpYXQiOjE2OTg5Mzc3ODQsImV4cCI6MTY5OTU0MjU4NH0.I1EKpUL5MI9S0IoP0gXbu15toDNfViuGjNQXi58A8fgF-YqUVoCtTEBt6iJP2jEuq-8y01T-t8ZkBUlUfEb9Yg"
 					}
 				},
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:8081/wallet-service/users?id=25",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8081",
-					"path": [
-						"wallet-service",
-						"users"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "25"
-						}
-					]
-				}
+				"url": "http://localhost:8081/wallet-service/users/1"
 			},
 			"response": []
 		},
@@ -45,14 +28,14 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": {
-						"token": "eyJhbGciOiJIUzUxMiJ9.eyJVc2VyIjp7ImlkIjoxLCJsb2dpbiI6ImFkbWluIiwicm9sZSI6IkFETUlOIn0sInN1YiI6ImFkbWluIiwiaXNzIjoiR3JpZ29yaXkiLCJpYXQiOjE2OTgyNDIzNjUsImV4cCI6MTY5ODg0NzE2NX0.AGKtmDZVTS2mXEKRL9jmY19I_AXj3oq10I1NHFpjOMKKdDFLVchlh-9fQJAnK4tSRNYWQwUwFgEv0cfiCiNmTw"
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJVc2VyIjp7ImlkIjoxLCJsb2dpbiI6ImFkbWluQGFkbWluLmFkbWluIiwicm9sZSI6IkFETUlOIn0sInN1YiI6ImFkbWluQGFkbWluLmFkbWluIiwiaXNzIjoiR3JpZ29yaXkiLCJpYXQiOjE2OTg5Mzc3ODQsImV4cCI6MTY5OTU0MjU4NH0.I1EKpUL5MI9S0IoP0gXbu15toDNfViuGjNQXi58A8fgF-YqUVoCtTEBt6iJP2jEuq-8y01T-t8ZkBUlUfEb9Yg"
 					}
 				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"login\": \"test2\",\n    \"password\": \"test2\",\n    \"role\": \"USER\"\n}",
+					"raw": "{\n    \"login\": \"test@test.test4\",\n    \"password\": \"test2\",\n    \"role\": \"USER\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -69,7 +52,7 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": {
-						"token": "eyJhbGciOiJIUzUxMiJ9.eyJVc2VyIjp7ImlkIjoxLCJsb2dpbiI6ImFkbWluIiwicm9sZSI6IkFETUlOIn0sInN1YiI6ImFkbWluIiwiaXNzIjoiR3JpZ29yaXkiLCJpYXQiOjE2OTgyNDIzNjUsImV4cCI6MTY5ODg0NzE2NX0.AGKtmDZVTS2mXEKRL9jmY19I_AXj3oq10I1NHFpjOMKKdDFLVchlh-9fQJAnK4tSRNYWQwUwFgEv0cfiCiNmTw"
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJVc2VyIjp7ImlkIjoxLCJsb2dpbiI6ImFkbWluQGFkbWluLmFkbWluIiwicm9sZSI6IkFETUlOIn0sInN1YiI6ImFkbWluQGFkbWluLmFkbWluIiwiaXNzIjoiR3JpZ29yaXkiLCJpYXQiOjE2OTg5Mzc3ODQsImV4cCI6MTY5OTU0MjU4NH0.I1EKpUL5MI9S0IoP0gXbu15toDNfViuGjNQXi58A8fgF-YqUVoCtTEBt6iJP2jEuq-8y01T-t8ZkBUlUfEb9Yg"
 					}
 				},
 				"method": "GET",
