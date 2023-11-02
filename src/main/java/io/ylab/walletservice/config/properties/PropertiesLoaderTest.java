@@ -1,13 +1,13 @@
-package io.ylab.walletservice.core.conf;
+package io.ylab.walletservice.config.properties;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Class for getting configuration from application.properties
+ * Class for getting configuration from test.properties
  */
-public class PropertiesLoader {
+public class PropertiesLoaderTest {
 
     /**
      * Method for getting configuration from application.properties
@@ -17,9 +17,9 @@ public class PropertiesLoader {
         try {
 
         Properties configuration = new Properties();
-        InputStream inputStream = PropertiesLoader.class
+        InputStream inputStream = PropertiesLoaderTest.class
                 .getClassLoader()
-                .getResourceAsStream("application.properties");
+                .getResourceAsStream("test.properties");
             configuration.load(inputStream);
         inputStream.close();
         return configuration;
