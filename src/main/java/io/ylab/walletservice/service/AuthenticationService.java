@@ -4,7 +4,6 @@ import io.ylab.walletservice.aop.annotations.Loggable;
 import io.ylab.walletservice.core.dto.*;
 import io.ylab.walletservice.core.exceptions.NotExistUserException;
 import io.ylab.walletservice.core.mappers.UserMapper;
-import io.ylab.walletservice.core.mappers.UserMapperImpl;
 import io.ylab.walletservice.dao.api.IAccountDao;
 import io.ylab.walletservice.dao.entity.UserEntity;
 import io.ylab.walletservice.in.utils.JWTTokenHandler;
@@ -13,6 +12,7 @@ import io.ylab.walletservice.service.api.IAuditService;
 import io.ylab.walletservice.service.api.IUserAuthenticationService;
 import io.ylab.walletservice.service.api.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
@@ -21,6 +21,7 @@ import java.math.BigDecimal;
  * Interact with {@link IUserService}, {@link IAccountDao ,} and {@link IAuditService}
  * This an implementation of {@link IUserAuthenticationService}
  */
+@Service
 @RequiredArgsConstructor
 @Loggable
 public class AuthenticationService implements IUserAuthenticationService {
@@ -43,12 +44,12 @@ public class AuthenticationService implements IUserAuthenticationService {
     /**
      * Initialize a field with a type {@link JWTTokenHandler} for using jwt token into class
      */
-    private final JWTTokenHandler handler = new JWTTokenHandler();
+    private final JWTTokenHandler handler;
 
     /**
      * initialize a field with a type {@link UserMapper} for converting userDTO and entity
      */
-    private final UserMapper userMapper = new UserMapperImpl();
+    private final UserMapper userMapper;
 
     /**
      * Used to create user by registration

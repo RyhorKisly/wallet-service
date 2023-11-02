@@ -3,6 +3,7 @@ package io.ylab.walletservice.service.api;
 import io.ylab.walletservice.core.dto.AuditDTO;
 import io.ylab.walletservice.dao.entity.AuditEntity;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -11,10 +12,10 @@ import java.util.Set;
 public interface IAuditService {
 
     /**
-     * get set of entities by login of the user
-     * @return set of entities for farther interaction with app
+     * get list of entities by login of the user
+     * @return list of entities for farther interaction with app
      */
-    Set<AuditEntity> getAll();
+    List<AuditEntity> getAll();
 
     /**
      * Saves a given entity.
