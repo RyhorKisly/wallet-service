@@ -2,10 +2,11 @@ package io.ylab.walletservice.dao;
 
 import io.ylab.walletservice.aop.annotations.Loggable;
 import io.ylab.walletservice.dao.api.IAuditDao;
-import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 import io.ylab.walletservice.dao.entity.AuditEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,14 +17,10 @@ import java.util.*;
  * Class for generic operations on a repository for an Audit.
  * This an implementation of {@link IAuditDao}
  */
+@Repository
 @RequiredArgsConstructor
 @Loggable
 public class AuditDao implements IAuditDao {
-
-    /**
-     * Message if throws SQLException
-     */
-    private static final String ERROR_CONNECTION = "Error connecting to database";
 
     /**
      * String for readability
@@ -55,17 +52,17 @@ public class AuditDao implements IAuditDao {
             "RETURNING id;";
 
     /**
-     * define a field with a type {@link IConnectionWrapper} for further aggregation
+     * define a field with a type {@link DataSource} for further aggregation
      */
-    private final IConnectionWrapper connection;
+    private final DataSource connection;
 
     /**
      * find set of entities by id of the user
      * @return set of entities from {@code audits}
      */
     @Override
-    public Set<AuditEntity> findAllAscByDTCreate() {
-        Set<AuditEntity> audit = new TreeSet<>(Comparator.comparing(AuditEntity::getDtCreate));
+    public List<AuditEntity> findAllAscByDTCreate() {
+        List<AuditEntity> audit = new LinkedList<>();
         try (Connection conn = this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(GET_AUDIT)) {
             try(ResultSet rs = ps.executeQuery()) {
@@ -77,8 +74,8 @@ public class AuditDao implements IAuditDao {
                     audit.add(auditEntity);
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(ERROR_CONNECTION, e);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
         return audit;
     }
@@ -103,8 +100,8 @@ public class AuditDao implements IAuditDao {
                     entity.setId(rs.getLong(ID));
                 }
             }
-        } catch (SQLException e) {
-                throw new RuntimeException(ERROR_CONNECTION, e);
+        } catch (SQLException ex) {
+                throw new RuntimeException(ex);
         }
         return entity;
     }

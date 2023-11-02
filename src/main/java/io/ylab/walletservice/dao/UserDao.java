@@ -3,35 +3,27 @@ package io.ylab.walletservice.dao;
 import io.ylab.walletservice.aop.annotations.Auditable;
 import io.ylab.walletservice.aop.annotations.Loggable;
 import io.ylab.walletservice.core.enums.UserRole;
-import io.ylab.walletservice.core.exceptions.NotUniqueException;
-import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 import io.ylab.walletservice.dao.api.IUserDao;
 import io.ylab.walletservice.dao.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 /**
  * Class for generic operations on a repository for User.
  * This an implementation of {@link IUserDao}
  */
+@Repository
 @RequiredArgsConstructor
+@Loggable
 @Auditable
 public class UserDao implements IUserDao {
-
-    /**
-     * Message if throws SQLException
-     */
-    private static final String ERROR_CONNECTION = "Error connecting to database";
-
-    /**
-     * Message when try save user with existed login
-     */
-    private static final String USER_LOGIN_UNIQUE = "user_login_unique";
-    private static final String USER_LOGIN_EXIST = "User with such login exist";
 
     /**
      * String for readability
@@ -53,11 +45,6 @@ public class UserDao implements IUserDao {
     private static final String ROLE = "role";
 
     /**
-     * Used when trying to save an entity, it is discovered that a user with the same login already exists
-     */
-    private static final String LOGIN_EXIST = "Such login exist, try again!";
-
-    /**
      * Query for finding user in bd
      */
     private static final String FIND_USER_BY_LOGIN = "SELECT id, login, password, role FROM app.\"User\" WHERE login = ?;";
@@ -69,16 +56,17 @@ public class UserDao implements IUserDao {
     private static final String SAVE_USER = "INSERT INTO app.\"User\"(login, password, role) VALUES (?, ?, ?) RETURNING id;";
 
     /**
-     * define a field with a type {@link IConnectionWrapper} for further aggregation
+     * define a field with a type {@link DataSource} for further aggregation
      */
-    private final IConnectionWrapper connection;
+    private final DataSource connection;
 
     /**
      * find entity by login
      * @param login find entity by login in {@code users}
      * @return entity from {@code users}
      */
-    public UserEntity find(String login) {
+    @Override
+    public Optional<UserEntity> find(String login) {
         UserEntity userEntity = null;
         try (Connection conn = this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_USER_BY_LOGIN)) {
@@ -92,14 +80,14 @@ public class UserDao implements IUserDao {
                     userEntity.setRole(UserRole.valueOf(rs.getString(ROLE)));
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(ERROR_CONNECTION, e);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
-        return userEntity;
+        return Optional.ofNullable(userEntity);
     }
 
     @Override
-    public UserEntity find(Long id) {
+    public Optional<UserEntity> find(Long id) {
         UserEntity userEntity = null;
         try (Connection conn = this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_USER_BY_ID)) {
@@ -113,10 +101,11 @@ public class UserDao implements IUserDao {
                     userEntity.setRole(UserRole.valueOf(rs.getString(ROLE)));
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(ERROR_CONNECTION, e);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
-        return userEntity;
+
+        return Optional.ofNullable(userEntity);
     }
 
     /**
@@ -142,9 +131,7 @@ public class UserDao implements IUserDao {
                 }
             }
         } catch (SQLException ex) {
-            if(ex.getMessage().contains(USER_LOGIN_UNIQUE)) {
-                throw new NotUniqueException(USER_LOGIN_EXIST, ex);
-            }
+            throw new RuntimeException(ex);
         }
         return entity;
     }

@@ -3,6 +3,8 @@ package io.ylab.walletservice.dao.api;
 
 import io.ylab.walletservice.dao.entity.AccountEntity;
 
+import java.util.Optional;
+
 /**
  * Interface for generic operations on a repository for an Account.
  */
@@ -12,7 +14,7 @@ public interface IAccountDao {
      * @param numberAccount find entity by number of an account
      * @return entity from storage
      */
-    AccountEntity find(Long numberAccount);
+    Optional<AccountEntity> find(Long numberAccount);
 
     /**
      * find entity by number of the account and login of the user
@@ -20,14 +22,14 @@ public interface IAccountDao {
      * @param login find entity by user login
      * @return entity from storage
      */
-    AccountEntity find(Long numberAccount, String login);
+    Optional<AccountEntity> find(Long numberAccount, String login);
 
     /**
      * find entity by number of the account and id of the user
      * @param userId find entity by user id
      * @return entity from storage
      */
-    AccountEntity findByUserId(Long userId);
+    Optional<AccountEntity> findByUserId(Long userId);
 
     /**
      * Saves a given entity.
