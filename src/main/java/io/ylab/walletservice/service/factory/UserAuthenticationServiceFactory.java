@@ -31,8 +31,7 @@ public class UserAuthenticationServiceFactory {
                 if(instance == null) {
                     instance = new AuthenticationService(
                             UserServiceFactory.getInstance(),
-                            AccountServiceFactory.getInstance(),
-                            AuditServiceFactory.getInstance()
+                            AccountServiceFactory.getInstance()
                     );
                 }
             }

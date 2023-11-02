@@ -1,6 +1,6 @@
 package io.ylab.walletsevice.dao.utils;
 
-import io.ylab.walletservice.core.utils.PropertiesLoaderTest;
+import io.ylab.walletservice.core.conf.PropertiesLoaderTest;
 import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 import io.ylab.walletsevice.dao.utils.api.ILiquibaseManagerTest;
 import liquibase.Liquibase;
@@ -15,7 +15,13 @@ import java.util.Properties;
 
 @RequiredArgsConstructor
 public class LiquibaseManagerTest implements ILiquibaseManagerTest {
+
+    /**
+     * Initialize class {@link Properties} for using properties from test.properties
+     */
     private static final Properties CONF = PropertiesLoaderTest.loadProperties();
+
+
     private final IConnectionWrapper connection;
 
     public void migrateDbCreate() {

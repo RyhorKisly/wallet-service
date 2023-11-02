@@ -5,6 +5,9 @@ import io.ylab.walletservice.core.enums.UserRole;
 import io.ylab.walletservice.dao.AccountDao;
 import io.ylab.walletservice.dao.TransactionDao;
 import io.ylab.walletservice.dao.UserDao;
+import io.ylab.walletservice.dao.api.IAccountDao;
+import io.ylab.walletservice.dao.api.ITransactionDao;
+import io.ylab.walletservice.dao.api.IUserDao;
 import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
 import io.ylab.walletservice.dao.entity.UserEntity;
@@ -21,15 +24,31 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DisplayName("Class for testing methods of the class TransactionDao")
 public class TransactionDaoTest extends ContainersEnvironment {
 
-    private TransactionDao transactionDao;
-    private UserDao userDao;
-    private AccountDao accountDao;
+    /**
+     * Define a field with a type {@link ITransactionDao} for further use in the test
+     */
+    private ITransactionDao transactionDao;
+
+    /**
+     * Define a field with a type {@link IUserDao} for further use in the test
+     */
+    private IUserDao userDao;
+
+    /**
+     * Define a field with a type {@link IAccountDao} for further use in the test
+     */
+    private IAccountDao accountDao;
+
+    /**
+     * Define a field with a type {@link ILiquibaseManagerTest} for further use in the test
+     */
     private ILiquibaseManagerTest liquibaseManagerTest;
 
     @BeforeAll
-    @DisplayName("Initialize class for tests")
+    @DisplayName("Initialize classes for tests and call method for creating schema and tables in test db")
     public void setUp() {
         transactionDao = new TransactionDao(ConnectionWrapperFactoryTest.getInstance());
         userDao = new UserDao(ConnectionWrapperFactoryTest.getInstance());
@@ -39,7 +58,7 @@ public class TransactionDaoTest extends ContainersEnvironment {
     }
 
     @AfterEach
-    @DisplayName("Migrates dates to drop schema and tables")
+    @DisplayName("Migrates data to drop data in table")
     public void drop() {
         this.liquibaseManagerTest.migrateDbDrop();
     }
@@ -49,7 +68,7 @@ public class TransactionDaoTest extends ContainersEnvironment {
     void saveTest() {
         UserEntity userEntity = new UserEntity();
         userEntity.setLogin("Have never been created account test1");
-        userEntity.setPassword("1tset");
+        userEntity.setPassword("test");
         userEntity.setRole(UserRole.USER);
         UserEntity savedUserEntity = userDao.save(userEntity);
 
@@ -70,16 +89,16 @@ public class TransactionDaoTest extends ContainersEnvironment {
     }
 
     @Test
-    @DisplayName("Test for finding transaction by id")
+    @DisplayName("Positive test for finding transaction by id")
     void findByIdTest() {
         UserEntity userEntity = new UserEntity();
         userEntity.setLogin("Have never been created account test1");
-        userEntity.setPassword("1tset");
+        userEntity.setPassword("test1");
         userEntity.setRole(UserRole.USER);
         UserEntity savedUserEntity = userDao.save(userEntity);
 
         AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setUserId(userEntity.getId());
+        accountEntity.setUserId(savedUserEntity.getId());
         accountEntity.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
 
@@ -98,7 +117,7 @@ public class TransactionDaoTest extends ContainersEnvironment {
     @Test
     @DisplayName("Negative test for checking null when id does not exist")
     void findByIdNonExistentTransactionTest() {
-        Assertions.assertNull(transactionDao.find("aslnasipuhg238rfjrrtest)"));
+        Assertions.assertNull(transactionDao.find("test"));
     }
 
     @Test
@@ -106,7 +125,7 @@ public class TransactionDaoTest extends ContainersEnvironment {
     void isExistTest() {
         UserEntity userEntity = new UserEntity();
         userEntity.setLogin("Have never been created account test1");
-        userEntity.setPassword("1tset");
+        userEntity.setPassword("test");
         userEntity.setRole(UserRole.USER);
         UserEntity savedUserEntity = userDao.save(userEntity);
 

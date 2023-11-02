@@ -55,22 +55,10 @@
             <column name="dt_create" type="timestamp without time zone">
                 <constraints nullable="false"/>
             </column>
-            <column name="user_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
             <column name="text" type="text">
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint  baseColumnNames="user_id"
-                                  baseTableName="Audit"
-                                  baseTableSchemaName="app"
-                                  constraintName="audit_user_id_fkey"
-                                  onDelete="NO ACTION"
-                                  onUpdate="NO ACTION"
-                                  referencedColumnNames="id"
-                                  referencedTableName="User"
-                                  referencedTableSchemaName="app"/>
 
 
         <createSequence sequenceName="Account_id_seq"

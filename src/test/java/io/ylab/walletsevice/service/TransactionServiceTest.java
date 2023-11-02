@@ -7,11 +7,17 @@ import io.ylab.walletservice.dao.AccountDao;
 import io.ylab.walletservice.dao.AuditDao;
 import io.ylab.walletservice.dao.TransactionDao;
 import io.ylab.walletservice.dao.UserDao;
+import io.ylab.walletservice.dao.api.IAccountDao;
+import io.ylab.walletservice.dao.api.ITransactionDao;
+import io.ylab.walletservice.dao.api.IUserDao;
 import io.ylab.walletservice.dao.entity.AccountEntity;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
 import io.ylab.walletservice.dao.entity.UserEntity;
+import io.ylab.walletservice.service.AccountService;
 import io.ylab.walletservice.service.AuditService;
 import io.ylab.walletservice.service.TransactionService;
+import io.ylab.walletservice.service.UserService;
+import io.ylab.walletservice.service.api.ITransactionService;
 import io.ylab.walletsevice.dao.ds.factory.ConnectionWrapperFactoryTest;
 import io.ylab.walletsevice.dao.utils.api.ILiquibaseManagerTest;
 import io.ylab.walletsevice.dao.utils.factory.LiquibaseManagerTestFactory;
@@ -26,39 +32,60 @@ import java.util.TreeSet;
 import java.util.UUID;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DisplayName("Class for testing methods of the class TransactionService")
 public class TransactionServiceTest extends ContainersEnvironment {
-    private UserDao userDao;
-    private AccountDao accountDao;
-    private TransactionDao transactionDao;
-    private TransactionService transactionService;
+
+    /**
+     * Define a field with a type {@link IUserDao} for further use in the test
+     */
+    private IUserDao userDao;
+
+    /**
+     * Define a field with a type {@link IAccountDao} for further use in the test
+     */
+    private IAccountDao accountDao;
+
+    /**
+     * Define a field with a type {@link ITransactionDao} for further use in the test
+     */
+    private ITransactionDao transactionDao;
+
+    /**
+     * Define a field with a type {@link ITransactionService} for further use in the test
+     */
+    private ITransactionService transactionService;
+
+    /**
+     * Define a field with a type {@link ILiquibaseManagerTest} for further use in the test
+     */
     private ILiquibaseManagerTest liquibaseManagerTest;
 
     @BeforeAll
-    @DisplayName("Initialize classes for tests")
+    @DisplayName("Initialize classes for tests and call method for creating schema and tables in test db")
     public void setUp() {
         userDao = new UserDao(ConnectionWrapperFactoryTest.getInstance());
         accountDao = new AccountDao(ConnectionWrapperFactoryTest.getInstance());
         transactionDao = new TransactionDao(ConnectionWrapperFactoryTest.getInstance());
-        AuditDao auditDao = new AuditDao(ConnectionWrapperFactoryTest.getInstance());
-        AuditService auditService = new AuditService(auditDao);
-        transactionService = new TransactionService(transactionDao, auditService);
+        UserService userService = new UserService(userDao);
+        AccountService accountService = new AccountService(accountDao, userService);
+        transactionService = new TransactionService(transactionDao, accountService);
 
         liquibaseManagerTest = LiquibaseManagerTestFactory.getInstance();
         liquibaseManagerTest.migrateDbCreate();
     }
 
     @AfterEach
-    @DisplayName("Migrates dates to drop schema and tables")
+    @DisplayName("Migrates data to drop data in table")
     public void drop() {
         this.liquibaseManagerTest.migrateDbDrop();
     }
 
     @Test
-    @DisplayName("Test for creating transaction")
+    @DisplayName("Positive test for creating transaction")
     void createTest() {
         UserEntity userEntity = new UserEntity();
         userEntity.setLogin("Have never been created transaction CreateTestAudit");
-        userEntity.setPassword("1tset");
+        userEntity.setPassword("test");
         userEntity.setRole(UserRole.USER);
         UserEntity savedUserEntity = userDao.save(userEntity);
 
@@ -77,15 +104,15 @@ public class TransactionServiceTest extends ContainersEnvironment {
         Assertions.assertEquals(transactionDTO.getTransactionId(), transactionEntity.getTransactionId());
         Assertions.assertEquals(transactionDTO.getSumOfTransaction(), transactionEntity.getSumOfTransaction());
         Assertions.assertEquals(transactionDTO.getOperation(), transactionEntity.getOperation());
-        Assertions.assertEquals(transactionDTO.getNumberAccount(), transactionEntity.getAccountId());
+        Assertions.assertEquals(transactionDTO.getAccountId(), transactionEntity.getAccountId());
     }
 
     @Test
-    @DisplayName("Test for getting transaction by id")
+    @DisplayName("Positive test for getting transaction by id")
     void getById() {
         UserEntity userEntity = new UserEntity();
         userEntity.setLogin("Have never been created transaction CreateTestAudit");
-        userEntity.setPassword("1tset");
+        userEntity.setPassword("test1");
         userEntity.setRole(UserRole.USER);
         UserEntity savedUserEntity = userDao.save(userEntity);
 
@@ -107,11 +134,11 @@ public class TransactionServiceTest extends ContainersEnvironment {
     }
 
     @Test
-    @DisplayName("Test for getting transactions by account entity")
+    @DisplayName("Positive test for getting transactions by account entity")
     void getAllByAccountEntity() {
         UserEntity userEntity = new UserEntity();
         userEntity.setLogin("Have never been created transaction CreateTestAudit");
-        userEntity.setPassword("1tset");
+        userEntity.setPassword("test1");
         userEntity.setRole(UserRole.USER);
         UserEntity savedUserEntity = userDao.save(userEntity);
 
@@ -138,17 +165,17 @@ public class TransactionServiceTest extends ContainersEnvironment {
         transactions.add(createdEntity1);
         transactions.add(createdEntity2);
 
-        Set<TransactionEntity> savedTransactions = transactionService.get(savedAccountEntity);
+        Set<TransactionEntity> savedTransactions = transactionService.get(savedAccountEntity.getId(), savedAccountEntity.getUserId());
 
         Assertions.assertEquals(transactions, savedTransactions);
     }
 
     @Test
-    @DisplayName("Test for finding transaction by id with return value as boolean")
+    @DisplayName("Positive test for finding transaction by id with return value as boolean")
     void isExistTest() {
         UserEntity userEntity = new UserEntity();
         userEntity.setLogin("Have never been created transaction CreateTestAudit");
-        userEntity.setPassword("1tset");
+        userEntity.setPassword("test1");
         userEntity.setRole(UserRole.USER);
         UserEntity savedUserEntity = userDao.save(userEntity);
 

@@ -1,5 +1,6 @@
 package io.ylab.walletservice.dao;
 
+import io.ylab.walletservice.aop.annotations.Loggable;
 import io.ylab.walletservice.dao.api.IAuditDao;
 import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 import io.ylab.walletservice.dao.entity.AuditEntity;
@@ -16,6 +17,7 @@ import java.util.*;
  * This an implementation of {@link IAuditDao}
  */
 @RequiredArgsConstructor
+@Loggable
 public class AuditDao implements IAuditDao {
 
     /**
@@ -31,11 +33,6 @@ public class AuditDao implements IAuditDao {
     /**
      * String for readability
      */
-    private static final String USER_ID = "user_id";
-
-    /**
-     * String for readability
-     */
     private static final String TEXT = "text";
 
     /**
@@ -46,17 +43,15 @@ public class AuditDao implements IAuditDao {
     /**
      * Query for finding all audit by user login
      */
-    private static final String GET_AUDIT = "SELECT app.\"Audit\".id, dt_create, user_id, text " +
+    private static final String GET_AUDIT = "SELECT app.\"Audit\".id, dt_create, text " +
             "FROM app.\"Audit\" " +
-            "INNER JOIN app.\"User\" ON app.\"Audit\".user_id = app.\"User\".id " +
-            "WHERE login = ? " +
             "ORDER BY dt_create;";
 
     /**
      * Query for saving audit
      */
-    private static final String SAVE_AUDIT = "INSERT INTO app.\"Audit\"(dt_create, user_id, text) " +
-            "VALUES (?, ?, ?) " +
+    private static final String SAVE_AUDIT = "INSERT INTO app.\"Audit\"(dt_create, text) " +
+            "VALUES (?, ?) " +
             "RETURNING id;";
 
     /**
@@ -65,21 +60,18 @@ public class AuditDao implements IAuditDao {
     private final IConnectionWrapper connection;
 
     /**
-     * find set of entities by login of the user
-     * @param login find entity by user login
+     * find set of entities by id of the user
      * @return set of entities from {@code audits}
      */
     @Override
-    public Set<AuditEntity> findAllByLoginAscByDTCreate(String login) {
+    public Set<AuditEntity> findAllAscByDTCreate() {
         Set<AuditEntity> audit = new TreeSet<>(Comparator.comparing(AuditEntity::getDtCreate));
         try (Connection conn = this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(GET_AUDIT)) {
-            ps.setObject(1, login);
             try(ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     AuditEntity auditEntity = new AuditEntity();
                     auditEntity.setId(rs.getLong(ID));
-                    auditEntity.setUserId(rs.getLong(USER_ID));
                     auditEntity.setText(rs.getString(TEXT));
                     auditEntity.setDtCreate(rs.getTimestamp(DT_CREATE).toLocalDateTime());
                     audit.add(auditEntity);
@@ -104,8 +96,7 @@ public class AuditDao implements IAuditDao {
              PreparedStatement ps = conn.prepareStatement(SAVE_AUDIT)) {
 
             ps.setObject(1, entity.getDtCreate());
-            ps.setObject(2, entity.getUserId());
-            ps.setObject(3, entity.getText());
+            ps.setObject(2, entity.getText());
 
             try(ResultSet rs = ps.executeQuery()) {
                 if(rs.next()) {

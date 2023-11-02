@@ -12,10 +12,9 @@ public interface IAuditService {
 
     /**
      * get set of entities by login of the user
-     * @param login get entity by user login
      * @return set of entities for farther interaction with app
      */
-    Set<AuditEntity> getAllByLogin(String login);
+    Set<AuditEntity> getAll();
 
     /**
      * Saves a given entity.

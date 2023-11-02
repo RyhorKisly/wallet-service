@@ -1,6 +1,11 @@
 package io.ylab.walletservice.service;
 
+import io.ylab.walletservice.aop.annotations.Loggable;
 import io.ylab.walletservice.core.dto.UserCreateDTO;
+import io.ylab.walletservice.core.dto.UserAuthenticationDTO;
+import io.ylab.walletservice.core.enums.UserRole;
+import io.ylab.walletservice.core.mappers.UserMapper;
+import io.ylab.walletservice.core.mappers.UserMapperImpl;
 import io.ylab.walletservice.dao.api.IUserDao;
 import io.ylab.walletservice.dao.entity.UserEntity;
 import io.ylab.walletservice.service.api.IUserService;
@@ -12,44 +17,35 @@ import lombok.RequiredArgsConstructor;
  * This an implementation of {@link IUserService}
  */
 @RequiredArgsConstructor
+@Loggable
 public class UserService implements IUserService {
-
-    /**
-     * Print when app can't find entity with entered params by user
-     */
-    private static final String WRONG_DATES = "Wrong login or password, try again";
 
     /**
      * define a field with a type {@link IUserDao} for further aggregation
      */
     private final IUserDao userDao;
+    private final UserMapper userMapper = new UserMapperImpl();
 
-    /**
-     * Create entity.
-     * Use the returned instance for further operations
-     * @param userCreateDTO used to create entity
-     * @return created entity
-     */
     @Override
-    public UserEntity create(UserCreateDTO userCreateDTO) {
-        UserEntity userEntity = convertToEntity(userCreateDTO);
+    public UserEntity createByUser(UserCreateDTO dto) {
+        UserEntity userEntity = userMapper.toEntity(dto);
         return userDao.save(userEntity);
     }
 
-    /**
-     * Get entity by login.
-     * Check whether entity found or not.
-     * @param login get entity by login
-     * @return entity for farther interaction on app
-     */
+    @Override
+    public UserEntity createByRegistration(UserAuthenticationDTO dto) {
+        UserEntity userEntity = convertToEntity(dto);
+        return userDao.save(userEntity);
+    }
+
     @Override
     public UserEntity get(String login) {
-        UserEntity userEntity = userDao.find(login);
-        if(userEntity != null) {
-            return userEntity;
-        }
-        System.out.println(WRONG_DATES);
-        return null;
+        return userDao.find(login);
+    }
+
+    @Override
+    public UserEntity get(Long id) {
+        return userDao.find(id);
     }
 
     /**
@@ -57,11 +53,11 @@ public class UserService implements IUserService {
      * @param dto used for conversion to {@link UserEntity}
      * @return converted {@link UserEntity}
      */
-    private UserEntity convertToEntity(UserCreateDTO dto) {
+    private UserEntity convertToEntity(UserAuthenticationDTO dto) {
         UserEntity userEntity = new UserEntity();
         userEntity.setLogin(dto.getLogin());
         userEntity.setPassword(dto.getPassword());
-        userEntity.setRole(dto.getRole());
+        userEntity.setRole(UserRole.USER);
         return userEntity;
     }
 }

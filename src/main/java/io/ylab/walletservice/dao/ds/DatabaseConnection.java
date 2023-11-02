@@ -1,6 +1,6 @@
 package io.ylab.walletservice.dao.ds;
 
-import io.ylab.walletservice.core.utils.PropertiesLoader;
+import io.ylab.walletservice.core.conf.PropertiesLoader;
 import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 
 import java.sql.Connection;

@@ -32,7 +32,7 @@ public class TransactionServiceFactory {
                 if(instance == null) {
                     instance = new TransactionService(
                             TransactionDaoFactory.getInstance(),
-                            AuditServiceFactory.getInstance()
+                            AccountServiceFactory.getInstance()
                     );
                 }
             }

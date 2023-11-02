@@ -34,11 +34,11 @@ public interface IAccountService {
     AccountEntity get(Long numberAccount, String login);
 
     /**
-     * get entity by number of the account and login of the user
-     * @param login get entity by user login
+     * get entity by number of the account and id of the user
+     * @param userId get entity by user id
      * @return entity for farther interaction with app
      */
-    AccountEntity get(String login);
+    AccountEntity getByUser(Long userId);
 
     /**
      * Update entity with given number of account.

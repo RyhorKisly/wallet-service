@@ -17,7 +17,7 @@ public class AccountDTO {
     /**
      * Used like ID of account in order to save in storage place and show in menu.
      */
-    private Long numberAccount;
+    private Long id;
 
     /**
      * Current account balance. Used for transfer the original balance value to the storage place.
@@ -27,6 +27,6 @@ public class AccountDTO {
     /**
      * Identifies that the account belongs to a specific user.
      */
-    private String login;
+    private Long userId;
 
 }

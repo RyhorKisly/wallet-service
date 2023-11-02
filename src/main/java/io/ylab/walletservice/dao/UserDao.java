@@ -1,6 +1,9 @@
 package io.ylab.walletservice.dao;
 
+import io.ylab.walletservice.aop.annotations.Auditable;
+import io.ylab.walletservice.aop.annotations.Loggable;
 import io.ylab.walletservice.core.enums.UserRole;
+import io.ylab.walletservice.core.exceptions.NotUniqueException;
 import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 import io.ylab.walletservice.dao.api.IUserDao;
 import io.ylab.walletservice.dao.entity.UserEntity;
@@ -16,6 +19,7 @@ import java.sql.SQLException;
  * This an implementation of {@link IUserDao}
  */
 @RequiredArgsConstructor
+@Auditable
 public class UserDao implements IUserDao {
 
     /**
@@ -27,6 +31,7 @@ public class UserDao implements IUserDao {
      * Message when try save user with existed login
      */
     private static final String USER_LOGIN_UNIQUE = "user_login_unique";
+    private static final String USER_LOGIN_EXIST = "User with such login exist";
 
     /**
      * String for readability
@@ -55,7 +60,8 @@ public class UserDao implements IUserDao {
     /**
      * Query for finding user in bd
      */
-    private static final String FIND_USER = "SELECT id, login, password, role FROM app.\"User\" WHERE login = ?;";
+    private static final String FIND_USER_BY_LOGIN = "SELECT id, login, password, role FROM app.\"User\" WHERE login = ?;";
+    private static final String FIND_USER_BY_ID = "SELECT id, login, password, role FROM app.\"User\" WHERE id = ?;";
 
     /**
      * Query for saving user in bd
@@ -75,8 +81,29 @@ public class UserDao implements IUserDao {
     public UserEntity find(String login) {
         UserEntity userEntity = null;
         try (Connection conn = this.connection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(FIND_USER)) {
+             PreparedStatement ps = conn.prepareStatement(FIND_USER_BY_LOGIN)) {
             ps.setObject(1, login);
+            try(ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    userEntity = new UserEntity();
+                    userEntity.setId(rs.getLong(ID));
+                    userEntity.setLogin(rs.getString(LOGIN));
+                    userEntity.setPassword(rs.getString(PASSWORD));
+                    userEntity.setRole(UserRole.valueOf(rs.getString(ROLE)));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(ERROR_CONNECTION, e);
+        }
+        return userEntity;
+    }
+
+    @Override
+    public UserEntity find(Long id) {
+        UserEntity userEntity = null;
+        try (Connection conn = this.connection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(FIND_USER_BY_ID)) {
+            ps.setObject(1, id);
             try(ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     userEntity = new UserEntity();
@@ -114,12 +141,9 @@ public class UserDao implements IUserDao {
                     entity.setId(rs.getLong(ID));
                 }
             }
-        } catch (SQLException e) {
-            if(e.getMessage().contains(USER_LOGIN_UNIQUE)) {
-                System.out.println(LOGIN_EXIST);
-                entity.setId(null);
-            } else {
-                throw new RuntimeException(ERROR_CONNECTION, e);
+        } catch (SQLException ex) {
+            if(ex.getMessage().contains(USER_LOGIN_UNIQUE)) {
+                throw new NotUniqueException(USER_LOGIN_EXIST, ex);
             }
         }
         return entity;

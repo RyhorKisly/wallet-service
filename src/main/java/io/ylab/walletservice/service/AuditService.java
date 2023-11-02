@@ -1,5 +1,6 @@
 package io.ylab.walletservice.service;
 
+import io.ylab.walletservice.aop.annotations.Loggable;
 import io.ylab.walletservice.core.dto.AuditDTO;
 import io.ylab.walletservice.dao.api.IAccountDao;
 import io.ylab.walletservice.dao.api.IAuditDao;
@@ -16,6 +17,7 @@ import java.util.Set;
  * This an implementation of {@link IAuditService}
  */
 @RequiredArgsConstructor
+@Loggable
 public class AuditService implements IAuditService {
 
     /**
@@ -25,12 +27,11 @@ public class AuditService implements IAuditService {
 
     /**
      * get set of entities by login of the user
-     * @param login get entity by user login
      * @return set of entities for farther interaction with app
      */
     @Override
-    public Set<AuditEntity> getAllByLogin(String login) {
-        return auditDao.findAllByLoginAscByDTCreate(login);
+    public Set<AuditEntity> getAll() {
+        return auditDao.findAllAscByDTCreate();
     }
 
     /**
@@ -43,7 +44,6 @@ public class AuditService implements IAuditService {
     public AuditEntity create(AuditDTO auditDTO) {
         AuditEntity auditEntity = new AuditEntity();
         auditEntity.setDtCreate(LocalDateTime.now());
-        auditEntity.setUserId(auditDTO.getUserId());
         auditEntity.setText(auditDTO.getText());
         return auditDao.save(auditEntity);
     }

@@ -3,10 +3,13 @@ package io.ylab.walletsevice.service;
 import io.ylab.walletservice.core.dto.AuditDTO;
 import io.ylab.walletservice.core.enums.UserRole;
 import io.ylab.walletservice.dao.UserDao;
+import io.ylab.walletservice.dao.api.IAuditDao;
+import io.ylab.walletservice.dao.api.IUserDao;
 import io.ylab.walletservice.dao.entity.AuditEntity;
 import io.ylab.walletservice.dao.AuditDao;
 import io.ylab.walletservice.dao.entity.UserEntity;
 import io.ylab.walletservice.service.AuditService;
+import io.ylab.walletservice.service.api.IAuditService;
 import io.ylab.walletsevice.dao.ds.factory.ConnectionWrapperFactoryTest;
 import io.ylab.walletsevice.dao.utils.api.ILiquibaseManagerTest;
 import io.ylab.walletsevice.dao.utils.factory.LiquibaseManagerTestFactory;
@@ -19,14 +22,31 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DisplayName("Class for testing methods of the class AuditService")
 public class AuditServiceTest extends ContainersEnvironment {
-    private UserDao userDao;
-    private AuditDao auditDao;
-    private AuditService auditService;
+
+    /**
+     * Define a field with a type {@link IUserDao} for further use in the test
+     */
+    private IUserDao userDao;
+
+    /**
+     * Define a field with a type {@link IAuditDao} for further use in the test
+     */
+    private IAuditDao auditDao;
+
+    /**
+     * Define a field with a type {@link IAuditService} for further use in the test
+     */
+    private IAuditService auditService;
+
+    /**
+     * Define a field with a type {@link ILiquibaseManagerTest} for further use in the test
+     */
     private ILiquibaseManagerTest liquibaseManagerTest;
 
     @BeforeAll
-    @DisplayName("Initialize classes for tests")
+    @DisplayName("Initialize classes for tests and call method for creating schema and tables in test db")
     public void setUp() {
         userDao = new UserDao(ConnectionWrapperFactoryTest.getInstance());
         auditDao = new AuditDao(ConnectionWrapperFactoryTest.getInstance());
@@ -37,7 +57,7 @@ public class AuditServiceTest extends ContainersEnvironment {
     }
 
     @AfterEach
-    @DisplayName("Migrates dates to drop schema and tables")
+    @DisplayName("Migrates data to drop data in table")
     public void drop() {
         this.liquibaseManagerTest.migrateDbDrop();
     }
@@ -54,12 +74,10 @@ public class AuditServiceTest extends ContainersEnvironment {
         AuditEntity auditEntity = new AuditEntity();
         auditEntity.setText("firstTestByUser");
         auditEntity.setDtCreate(LocalDateTime.now());
-        auditEntity.setUserId(savedUserEntity.getId());
 
         AuditEntity auditEntity2 = new AuditEntity();
         auditEntity2.setText("secondTestByUser");
         auditEntity2.setDtCreate(LocalDateTime.now());
-        auditEntity2.setUserId(savedUserEntity.getId());
 
         auditDao.save(auditEntity);
         auditDao.save(auditEntity2);
@@ -69,24 +87,17 @@ public class AuditServiceTest extends ContainersEnvironment {
         audits.add(auditEntity2);
 
 
-        Assertions.assertEquals(audits, auditService.getAllByLogin(savedUserEntity.getLogin()));
+        Assertions.assertEquals(audits, auditService.getAll());
     }
 
     @Test
-    @DisplayName("Test for creating audit")
+    @DisplayName("Positive test for creating audit")
     void createTest() {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setLogin("Have never been created account test1");
-        userEntity.setPassword("1tset");
-        userEntity.setRole(UserRole.USER);
-        UserEntity savedUserEntity = userDao.save(userEntity);
-
-        AuditDTO auditDTO = new AuditDTO(savedUserEntity.getId(),"firstTestByAdmin");
+        AuditDTO auditDTO = new AuditDTO("firstTestByAdmin");
 
         AuditEntity entity = auditService.create(auditDTO);
 
         Assertions.assertEquals(auditDTO.getText(), entity.getText());
-        Assertions.assertEquals(auditDTO.getUserId(), entity.getUserId());
 
     }
 }

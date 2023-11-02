@@ -1,0 +1,44 @@
+{
+	"info": {
+		"_postman_id": "bfa20c97-9fe2-4680-9460-3ce4915c767d",
+		"name": "LOCAL-account-servlet",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "26695165",
+		"_collection_link": "https://blue-astronaut-753448.postman.co/workspace/wallet-service~126d125f-834c-427a-9754-ffdf2eed10c2/collection/26695165-bfa20c97-9fe2-4680-9460-3ce4915c767d?action=share&source=collection_link&creator=26695165"
+	},
+	"item": [
+		{
+			"name": "get account by userId",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJVc2VyIjp7ImlkIjoxLCJsb2dpbiI6ImFkbWluIiwicm9sZSI6IkFETUlOIn0sInN1YiI6ImFkbWluIiwiaXNzIjoiR3JpZ29yaXkiLCJpYXQiOjE2OTgyNDIzNjUsImV4cCI6MTY5ODg0NzE2NX0.AGKtmDZVTS2mXEKRL9jmY19I_AXj3oq10I1NHFpjOMKKdDFLVchlh-9fQJAnK4tSRNYWQwUwFgEv0cfiCiNmTw"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/wallet-service/users/account?userId=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"wallet-service",
+						"users",
+						"account"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
