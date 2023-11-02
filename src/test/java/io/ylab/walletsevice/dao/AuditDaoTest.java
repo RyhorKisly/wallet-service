@@ -27,11 +27,6 @@ public class AuditDaoTest extends ContainersEnvironment {
     private IAuditDao auditDao;
 
     /**
-     * Define a field with a type {@link IUserDao} for further use in the test
-     */
-    private IUserDao userDao;
-
-    /**
      * Define a field with a type {@link ILiquibaseManagerTest} for further use in the test
      */
     private ILiquibaseManagerTest liquibaseManagerTest;
@@ -40,7 +35,6 @@ public class AuditDaoTest extends ContainersEnvironment {
     @DisplayName("Initialize classes for tests and call method for creating schema and tables in test db")
     public void setUp() {
         auditDao = new AuditDao(ConnectionWrapperFactoryTest.getInstance());
-        userDao = new UserDao(ConnectionWrapperFactoryTest.getInstance());
         liquibaseManagerTest = LiquibaseManagerTestFactory.getInstance();
         liquibaseManagerTest.migrateDbCreate();
     }
@@ -54,12 +48,6 @@ public class AuditDaoTest extends ContainersEnvironment {
     @Test
     @DisplayName("Positive test for saving audit")
     void saveTest() {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setLogin("Have never been created account test1");
-        userEntity.setPassword("test");
-        userEntity.setRole(UserRole.USER);
-        UserEntity savedUserEntity = userDao.save(userEntity);
-
         AuditEntity auditEntity = new AuditEntity();
         auditEntity.setDtCreate(LocalDateTime.now());
         auditEntity.setText("test");

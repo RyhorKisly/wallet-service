@@ -19,9 +19,11 @@ import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DisplayName("Class for testing methods of the class TransactionDao")
@@ -68,7 +70,7 @@ public class TransactionDaoTest extends ContainersEnvironment {
     void saveTest() {
         UserEntity userEntity = new UserEntity();
         userEntity.setLogin("Have never been created account test1");
-        userEntity.setPassword("test");
+        userEntity.setPassword("test1");
         userEntity.setRole(UserRole.USER);
         UserEntity savedUserEntity = userDao.save(userEntity);
 
@@ -109,15 +111,16 @@ public class TransactionDaoTest extends ContainersEnvironment {
         transactionEntity.setDtCreate(LocalDateTime.now());
         transactionEntity.setAccountId(savedAccountEntity.getId());
         TransactionEntity savedTransactionEntity = transactionDao.save(transactionEntity);
-        TransactionEntity foundTransactionEntity = transactionDao.find(savedTransactionEntity.getTransactionId());
+        Optional<TransactionEntity> foundTransactionEntity = transactionDao.find(savedTransactionEntity.getTransactionId());
 
-        Assertions.assertEquals(savedTransactionEntity, foundTransactionEntity);
+        Assertions.assertEquals(savedTransactionEntity, foundTransactionEntity.orElseThrow(RuntimeException::new));
     }
 
     @Test
     @DisplayName("Negative test for checking null when id does not exist")
     void findByIdNonExistentTransactionTest() {
-        Assertions.assertNull(transactionDao.find("test"));
+        Optional<TransactionEntity> foundTransactionEntity = transactionDao.find("test");
+        assertThrowsExactly(RuntimeException.class, () -> foundTransactionEntity.orElseThrow(RuntimeException::new));
     }
 
     @Test

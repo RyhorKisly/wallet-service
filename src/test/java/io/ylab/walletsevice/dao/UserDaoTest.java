@@ -1,7 +1,6 @@
 package io.ylab.walletsevice.dao;
 
 import io.ylab.walletservice.core.enums.UserRole;
-import io.ylab.walletservice.core.exceptions.NotUniqueException;
 import io.ylab.walletservice.dao.UserDao;
 import io.ylab.walletservice.dao.api.IUserDao;
 import io.ylab.walletservice.dao.entity.UserEntity;
@@ -11,7 +10,10 @@ import io.ylab.walletsevice.dao.utils.factory.LiquibaseManagerTestFactory;
 import io.ylab.walletsevice.testcontainers.config.ContainersEnvironment;
 import org.junit.jupiter.api.*;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DisplayName("Class for testing methods of the class UserDao")
@@ -68,7 +70,7 @@ public class UserDaoTest extends ContainersEnvironment {
 
         userDao.save(userEntity);
 
-        Assertions.assertThrows(NotUniqueException.class, () -> userDao.save(userEntity));
+        Assertions.assertThrows(RuntimeException.class, () -> userDao.save(userEntity));
     }
 
     @Test
@@ -80,15 +82,16 @@ public class UserDaoTest extends ContainersEnvironment {
         userEntity.setRole(UserRole.USER);
 
         UserEntity savedEntity = userDao.save(userEntity);
-        UserEntity foundEntity = userDao.find(savedEntity.getLogin());
+        Optional<UserEntity> foundEntity = userDao.find(savedEntity.getLogin());
 
-        assertEquals(savedEntity, foundEntity);
+        assertEquals(savedEntity, foundEntity.orElseThrow(RuntimeException::new));
     }
 
     @Test
     @DisplayName("Negative test for finding user by login")
     void findByLoginNotExistUserTest() {
-        Assertions.assertNull(userDao.find("test"));
+        Optional<UserEntity> foundEntity = userDao.find("test");
+        assertThrowsExactly(RuntimeException.class, () -> foundEntity.orElseThrow(RuntimeException::new));
     }
 
     @Test
@@ -100,21 +103,16 @@ public class UserDaoTest extends ContainersEnvironment {
         userEntity.setRole(UserRole.USER);
 
         UserEntity savedEntity = userDao.save(userEntity);
-        UserEntity foundEntity = userDao.find(savedEntity.getId());
+        Optional<UserEntity> foundEntity = userDao.find(savedEntity.getId());
 
-        assertEquals(savedEntity, foundEntity);
+        assertEquals(savedEntity, foundEntity.orElseThrow(RuntimeException::new));
     }
 
     @Test
     @DisplayName("Negative test for finding user by id")
     void findByIdNotExistUserTest() {
-        Assertions.assertNull(userDao.find(10L));
-    }
-
-    @Test
-    @DisplayName("Negative test for checking null when login does not exist")
-    void findByLoginNonExistentUserTest() {
-        Assertions.assertNull(userDao.find("Have never been created user)"));
+        Optional<UserEntity> foundEntity = userDao.find(10L);
+        assertThrowsExactly(RuntimeException.class, () -> foundEntity.orElseThrow(RuntimeException::new));
     }
 
 }

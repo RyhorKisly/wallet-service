@@ -1,6 +1,6 @@
 package io.ylab.walletsevice.testcontainers.containers;
 
-import io.ylab.walletservice.core.conf.PropertiesLoaderTest;
+import io.ylab.walletservice.config.properties.PropertiesLoaderTest;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.Properties;
