@@ -3,8 +3,10 @@ package io.ylab.walletservice.in.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import io.ylab.walletservice.aop.annotations.Loggable;
-import io.ylab.walletservice.core.conf.PropertiesLoaderToken;
+import io.ylab.walletservice.config.properties.JWTProperties;
 import io.ylab.walletservice.core.dto.UserDTO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Properties;
@@ -15,12 +17,14 @@ import java.util.function.Function;
  * Class for creating, validating token and getting information from token
  */
 @Loggable
+@Component
+@RequiredArgsConstructor
 public class JWTTokenHandler {
 
     /**
      * Define a field with a type {@link Properties} for further aggregation
      */
-    private final Properties property = PropertiesLoaderToken.loadProperties();
+    private final JWTProperties property;
 
     /**
      * Define a field with a type {@link ObjectMapper} for further aggregation
@@ -44,12 +48,12 @@ public class JWTTokenHandler {
      */
     public String generateUserAccessToken(UserDTO dto, String name) {
         return Jwts.builder()
-                .claim(property.getProperty("jwt.user"), dto)
+                .claim(property.getUser(), dto)
                 .setSubject(name)
-                .setIssuer(property.getProperty("jwt.issuer"))
+                .setIssuer(property.getIssuer())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(7))) // 1 week
-                .signWith(SignatureAlgorithm.HS512, property.getProperty("jwt.secret"))
+                .signWith(SignatureAlgorithm.HS512, property.getSecret())
                 .compact();
     }
 
@@ -61,10 +65,10 @@ public class JWTTokenHandler {
     public String generateSystemAccessToken(String name) {
         return Jwts.builder()
                 .setSubject(name)
-                .setIssuer(property.getProperty("jwt.issuer"))
+                .setIssuer(property.getIssuer())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(7))) // 1 week
-                .signWith(SignatureAlgorithm.HS512, property.getProperty("jwt.secret"))
+                .signWith(SignatureAlgorithm.HS512, property.getSecret())
                 .compact();
     }
 
@@ -87,7 +91,7 @@ public class JWTTokenHandler {
      */
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(property.getProperty("jwt.secret"))
+                .setSigningKey(property.getSecret())
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -108,15 +112,15 @@ public class JWTTokenHandler {
      */
     public UserDTO getUser(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey(property.getProperty("jwt.secret"))
+                .setSigningKey(property.getSecret())
                 .parseClaimsJws(token)
                 .getBody();
-        return objectMapper.convertValue(claims.get(property.getProperty("jwt.user")), UserDTO.class);
+        return objectMapper.convertValue(claims.get(property.getUser()), UserDTO.class);
     }
 
     public boolean validate(String token) {
         try {
-            Jwts.parser().setSigningKey(property.getProperty("jwt.secret")).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(property.getSecret()).parseClaimsJws(token);
             return true;
         } catch (SignatureException ex) {
             //logger.error("Invalid JWT signature - {}", ex.getMessage());

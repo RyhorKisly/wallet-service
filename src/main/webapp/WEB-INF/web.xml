@@ -7,8 +7,14 @@
 
     <display-name>wallet-service</display-name>
 
-    <listener>
-        <listener-class>io.ylab.walletservice.in.listeners.LiquibaseJakartaServletListener</listener-class>
-    </listener>
+    <filter>
+        <filter-name>JWTFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>JWTFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
 
 </web-app>
