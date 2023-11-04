@@ -16,4 +16,9 @@ public class AuditDTO {
      * Message where we write specific action performed by the user.
      */
     private String text;
+
+    /**
+     * Class instance creation time
+     */
+    private Long dtCreate;
 }

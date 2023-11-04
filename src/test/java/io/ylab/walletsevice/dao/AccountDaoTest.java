@@ -14,8 +14,10 @@ import io.ylab.walletsevice.testcontainers.config.ContainersEnvironment;
 import org.junit.jupiter.api.*;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DisplayName("Class for testing methods of the class AccountDao")
@@ -85,9 +87,8 @@ public class AccountDaoTest extends ContainersEnvironment {
         AccountEntity accountEntity2 = new AccountEntity();
         accountEntity2.setUserId(userEntity.getId());
         accountEntity2.setBalance(new BigDecimal("0.0"));
-        AccountEntity savedAccountEntity2 = accountDao.save(accountEntity2);
 
-        Assertions.assertNull(savedAccountEntity2.getId());
+        assertThrowsExactly(RuntimeException.class, () -> accountDao.save(accountEntity2));
 
     }
 
@@ -104,15 +105,16 @@ public class AccountDaoTest extends ContainersEnvironment {
         accountEntity.setUserId(savedEntity.getId());
         accountEntity.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
-        AccountEntity foundAccountEntity = accountDao.find(savedAccountEntity.getId());
+        Optional<AccountEntity> foundAccountEntity = accountDao.find(savedAccountEntity.getId());
 
-        Assertions.assertEquals(savedAccountEntity, foundAccountEntity);
+        Assertions.assertEquals(savedAccountEntity, foundAccountEntity.orElseThrow(RuntimeException::new));
     }
 
     @Test
     @DisplayName("Negative test for checking null when id does not exist")
     void findByIdNonExistentAccountTest() {
-        Assertions.assertNull(accountDao.find(-23423423424L));
+        Optional<AccountEntity> foundAccountEntity = accountDao.find(-23423423424L);
+        assertThrowsExactly(RuntimeException.class, () -> foundAccountEntity.orElseThrow(RuntimeException::new));
     }
 
     @Test
@@ -128,15 +130,17 @@ public class AccountDaoTest extends ContainersEnvironment {
         accountEntity.setUserId(savedEntity.getId());
         accountEntity.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
-        AccountEntity foundAccountEntity = accountDao.find(savedAccountEntity.getId(), userEntity.getLogin());
+        Optional<AccountEntity> foundAccountEntity = accountDao.find(savedAccountEntity.getId(), userEntity.getLogin());
 
-        Assertions.assertEquals(savedAccountEntity, foundAccountEntity);
+        Assertions.assertEquals(savedAccountEntity, foundAccountEntity.orElseThrow(RuntimeException::new));
     }
 
     @Test
     @DisplayName("Negative test for checking null when id and login does not exist")
     void findByIdAndLoginNonExistentAccountTest() {
-        Assertions.assertNull(accountDao.find(-2332L, "Have never been created user)"));
+        Optional<AccountEntity> foundAccountEntity = accountDao.find(-2332L, "Have never been created user)");
+        assertThrowsExactly(RuntimeException.class, () -> foundAccountEntity.orElseThrow(RuntimeException::new));
+
     }
 
     @Test
@@ -152,15 +156,17 @@ public class AccountDaoTest extends ContainersEnvironment {
         accountEntity.setUserId(savedEntity.getId());
         accountEntity.setBalance(new BigDecimal("0.0"));
         AccountEntity savedAccountEntity = accountDao.save(accountEntity);
-        AccountEntity foundAccountEntity = accountDao.findByUserId(userEntity.getId());
+        Optional<AccountEntity> foundAccountEntity = accountDao.findByUserId(userEntity.getId());
 
-        Assertions.assertEquals(savedAccountEntity, foundAccountEntity);
+        Assertions.assertEquals(savedAccountEntity, foundAccountEntity.orElseThrow(RuntimeException::new));
     }
 
     @Test
     @DisplayName("Negative test for checking null when login does not exist")
     void findByLoginNonExistentAccountTest() {
-        Assertions.assertNull(accountDao.find( 34534L));
+        Optional<AccountEntity> foundAccountEntity = accountDao.find( 34534L);
+        assertThrowsExactly(RuntimeException.class, () -> foundAccountEntity.orElseThrow(RuntimeException::new));
+
     }
 
     @Test

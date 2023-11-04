@@ -14,7 +14,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"login\": \"test10\",\n    \"password\": \"test10\"\n}",
+					"raw": "{\n    \"login\": \"tesr@tesr.test\",\n    \"password\": \"test35\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -28,11 +28,17 @@
 		{
 			"name": "login user",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": ""
+					}
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"login\": \"admin\",\n    \"password\": \"admin\"\n}",
+					"raw": "{\n    \"login\": \"admin@admin.admin\",\n    \"password\": \"admin\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"

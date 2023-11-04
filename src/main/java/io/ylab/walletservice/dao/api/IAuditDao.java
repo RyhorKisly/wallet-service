@@ -2,6 +2,7 @@ package io.ylab.walletservice.dao.api;
 
 import io.ylab.walletservice.dao.entity.AuditEntity;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -10,10 +11,10 @@ import java.util.Set;
 public interface IAuditDao {
 
     /**
-     * Find set of entities by id of the user
-     * @return set of entities from storage
+     * Find list of entities by id of the user
+     * @return list of entities from storage
      */
-    Set<AuditEntity> findAllAscByDTCreate();
+    List<AuditEntity> findAllAscByDTCreate();
 
     /**
      * Saves a given entity.

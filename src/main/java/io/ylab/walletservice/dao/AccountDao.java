@@ -3,38 +3,26 @@ package io.ylab.walletservice.dao;
 import io.ylab.walletservice.aop.annotations.Auditable;
 import io.ylab.walletservice.aop.annotations.Loggable;
 import io.ylab.walletservice.dao.api.IAccountDao;
-import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 import io.ylab.walletservice.dao.entity.AccountEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 /**
  * Class for generic operations on a repository for an Account.
  * This an implementation of {@link IAccountDao}
  */
+@Repository
 @RequiredArgsConstructor
 @Loggable
 @Auditable
 public class AccountDao implements IAccountDao {
-
-    /**
-     * Used when trying to save an entity, it is discovered that a user with the same login already has an account
-     */
-    private static final String USER_HAS_ACCOUNT = "You have an account. You can't create more than one account";
-
-    /**
-     * Message if throws SQLException
-     */
-    private static final String ERROR_CONNECTION = "Error connecting to database";
-
-    /**
-     * Message when try save account with existed user_id in other created account
-     */
-    private static final String USER_ID_UNIQUE = "account_user_id_unique";
 
     /**
      * String for readability
@@ -82,9 +70,9 @@ public class AccountDao implements IAccountDao {
     private static final String UPDATE_ACCOUNT = "UPDATE app.\"Account\" SET balance = ? WHERE id = ?;";
 
     /**
-     * define a field with a type {@link IConnectionWrapper} for further aggregation
+     * define a field with a type {@link DataSource} for further aggregation
      */
-    private final IConnectionWrapper connection;
+    private final DataSource connection;
 
     /**
      * find entity by number of an account
@@ -92,7 +80,7 @@ public class AccountDao implements IAccountDao {
      * @return entity from {@code accounts}
      */
     @Override
-    public AccountEntity find(Long numberAccount) {
+    public Optional<AccountEntity> find(Long numberAccount) {
         AccountEntity accountEntity = null;
         try (Connection conn =  this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_ACCOUNT_BY_ACCOUNT_ID)) {
@@ -105,10 +93,10 @@ public class AccountDao implements IAccountDao {
                     accountEntity.setUserId(rs.getLong(USER_ID));
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(ERROR_CONNECTION, e);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
-        return accountEntity;
+        return Optional.ofNullable(accountEntity);
     }
 
     /**
@@ -118,7 +106,7 @@ public class AccountDao implements IAccountDao {
      * @return entity from {@code accounts}
      */
     @Override
-    public AccountEntity find(Long numberAccount, String login) {
+    public Optional<AccountEntity> find(Long numberAccount, String login) {
         AccountEntity accountEntity = null;
         try (Connection conn =  this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_ACCOUNT_BY_ID_AND_LOGIN)) {
@@ -132,14 +120,14 @@ public class AccountDao implements IAccountDao {
                     accountEntity.setUserId(rs.getLong(USER_ID));
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(ERROR_CONNECTION, e);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
-        return accountEntity;
+        return Optional.ofNullable(accountEntity);
     }
 
     @Override
-    public AccountEntity findByUserId(Long userId) {
+    public Optional<AccountEntity> findByUserId(Long userId) {
         AccountEntity accountEntity = null;
         try (Connection conn =  this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_ACCOUNT_BY_USER_ID)) {
@@ -152,10 +140,10 @@ public class AccountDao implements IAccountDao {
                     accountEntity.setUserId(rs.getLong(USER_ID));
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(ERROR_CONNECTION, e);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
-        return accountEntity;
+        return Optional.ofNullable(accountEntity);
     }
 
     /**
@@ -180,12 +168,9 @@ public class AccountDao implements IAccountDao {
                 }
             }
         } catch (SQLException e) {
-            if(e.getMessage().contains(USER_ID_UNIQUE)) {
-                System.out.println(USER_HAS_ACCOUNT);
-            } else {
-            throw new RuntimeException(ERROR_CONNECTION, e);
-            }
+            throw new RuntimeException(e);
         }
+
         return entity;
     }
 
@@ -203,8 +188,8 @@ public class AccountDao implements IAccountDao {
             ps.setObject(1, entity.getBalance());
             ps.setObject(2, entity.getId());
             ps.execute();
-        } catch (SQLException e) {
-            throw new RuntimeException(ERROR_CONNECTION, e);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
         return entity;
     }

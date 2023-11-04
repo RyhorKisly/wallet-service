@@ -1,6 +1,6 @@
 package io.ylab.walletsevice.dao.ds.factory;
 
-import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
+import io.ylab.walletsevice.dao.api.IConnectionWrapper;
 import io.ylab.walletsevice.dao.ds.DatabaseConnectionTest;
 
 /**

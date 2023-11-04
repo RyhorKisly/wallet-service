@@ -2,6 +2,8 @@ package io.ylab.walletservice.dao.api;
 
 import io.ylab.walletservice.dao.entity.UserEntity;
 
+import java.util.Optional;
+
 /**
  * Interface for generic operations on a repository for Users.
  */
@@ -12,14 +14,14 @@ public interface IUserDao {
      * @param login find entity by login
      * @return entity from storage
      */
-    UserEntity find(String login);
+    Optional<UserEntity> find(String login);
 
     /**
      * find entity by id
      * @param id find entity by id
      * @return entity from storage
      */
-    UserEntity find(Long id);
+    Optional<UserEntity> find(Long id);
 
 
     /**

@@ -1,7 +1,5 @@
 package io.ylab.walletservice.core.exceptions;
 
-import java.sql.SQLException;
-
 /**
  * Exception should be used if added entity field exist in db and have to be unique
  */

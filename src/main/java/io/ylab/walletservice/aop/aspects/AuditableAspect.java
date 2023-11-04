@@ -2,22 +2,25 @@ package io.ylab.walletservice.aop.aspects;
 
 import io.ylab.walletservice.core.dto.AuditDTO;
 import io.ylab.walletservice.service.api.IAuditService;
-import io.ylab.walletservice.service.factory.AuditServiceFactory;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.stereotype.Component;
 
 /**
  * Class for creating audit
  */
 @Aspect
+@Component
+@RequiredArgsConstructor
 public class AuditableAspect {
 
     /**
      * Define a field with a type {@link IAuditService} for further aggregation
      */
-    private final IAuditService auditService = AuditServiceFactory.getInstance();
+    private final IAuditService auditService;
 
 
     /**

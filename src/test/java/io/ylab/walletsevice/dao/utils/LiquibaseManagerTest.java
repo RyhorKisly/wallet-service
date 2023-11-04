@@ -1,7 +1,7 @@
 package io.ylab.walletsevice.dao.utils;
 
-import io.ylab.walletservice.core.conf.PropertiesLoaderTest;
-import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
+import io.ylab.walletservice.config.properties.PropertiesLoaderTest;
+import io.ylab.walletsevice.dao.api.IConnectionWrapper;
 import io.ylab.walletsevice.dao.utils.api.ILiquibaseManagerTest;
 import liquibase.Liquibase;
 import liquibase.database.Database;

@@ -7,15 +7,17 @@ import io.ylab.walletservice.dao.api.IAuditDao;
 import io.ylab.walletservice.dao.entity.AuditEntity;
 import io.ylab.walletservice.service.api.IAuditService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Class for generic operations on a service for an Audit.
  * Interact with {@link IAccountDao ,} and {@link IAuditService}
  * This an implementation of {@link IAuditService}
  */
+@Service
 @RequiredArgsConstructor
 @Loggable
 public class AuditService implements IAuditService {
@@ -26,11 +28,11 @@ public class AuditService implements IAuditService {
     private final IAuditDao auditDao;
 
     /**
-     * get set of entities by login of the user
-     * @return set of entities for farther interaction with app
+     * get list of entities by login of the user
+     * @return list of entities for farther interaction with app
      */
     @Override
-    public Set<AuditEntity> getAll() {
+    public List<AuditEntity> getAll() {
         return auditDao.findAllAscByDTCreate();
     }
 

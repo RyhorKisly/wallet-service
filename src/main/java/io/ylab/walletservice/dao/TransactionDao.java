@@ -4,23 +4,26 @@ import io.ylab.walletservice.aop.annotations.Auditable;
 import io.ylab.walletservice.aop.annotations.Loggable;
 import io.ylab.walletservice.core.enums.Operation;
 import io.ylab.walletservice.core.exceptions.NotUniqueException;
-import io.ylab.walletservice.dao.ds.api.IConnectionWrapper;
 import io.ylab.walletservice.dao.api.ITransactionDao;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
  * Class for generic operations on a repository for Transaction.
  * This an implementation of {@link ITransactionDao}
  */
+@Repository
 @RequiredArgsConstructor
 @Loggable
 @Auditable
@@ -57,17 +60,6 @@ public class TransactionDao implements ITransactionDao {
     private static final String ERROR_CONNECTION = "Error connecting to database";
 
     /**
-     * Message when try save user with existed id of transaction
-     */
-    private static final String TRANSACTION_ID_EXIST = "Such transaction id exist";
-
-    /**
-     * Name of constraint
-     */
-    private static final String TRANSACTION_ID_PKEY= "Transaction_pkey";
-
-
-    /**
      * Query for finding transaction by id
      */
     private static final String FIND_TRANSACTION = "SELECT id, operation, sum_of_transaction, account_id, dt_create " +
@@ -94,9 +86,9 @@ public class TransactionDao implements ITransactionDao {
     private static final String DELETE_TRANSACTION = "DELETE FROM app.\"Transaction\" WHERE id = ?;";
 
     /**
-     * define a field with a type {@link IConnectionWrapper} for further aggregation
+     * define a field with a type {@link DataSource} for further aggregation
      */
-    private final IConnectionWrapper connection;
+    private final DataSource connection;
 
     /**
      * find entity by ID
@@ -104,7 +96,7 @@ public class TransactionDao implements ITransactionDao {
      * @return entity from {@code transactions}
      */
     @Override
-    public TransactionEntity find(String transactionalId) {
+    public Optional<TransactionEntity> find(String transactionalId) {
         TransactionEntity entity = null;
         try (Connection conn = this.connection.getConnection();
              PreparedStatement ps = conn.prepareStatement(FIND_TRANSACTION)) {
@@ -119,10 +111,10 @@ public class TransactionDao implements ITransactionDao {
                     entity.setDtCreate(rs.getTimestamp(DT_CREATE).toLocalDateTime());
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(ERROR_CONNECTION, e);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
-        return entity;
+        return Optional.ofNullable(entity);
     }
 
     /**
@@ -150,8 +142,8 @@ public class TransactionDao implements ITransactionDao {
             if(entity == null) {
                 check = false;
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(ERROR_CONNECTION, e);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
         return check;
     }
@@ -176,11 +168,8 @@ public class TransactionDao implements ITransactionDao {
             ps.setObject(5, entity.getDtCreate());
             ps.execute();
 
-        } catch (SQLException e) {
-            if(e.getMessage().contains(TRANSACTION_ID_PKEY)) {
-                throw new NotUniqueException(TRANSACTION_ID_EXIST, e);
-            }
-            throw new RuntimeException(ERROR_CONNECTION, e);
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
         return entity;
     }

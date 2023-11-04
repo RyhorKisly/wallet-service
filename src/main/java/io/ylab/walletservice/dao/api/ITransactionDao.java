@@ -2,6 +2,7 @@ package io.ylab.walletservice.dao.api;
 
 import io.ylab.walletservice.dao.entity.TransactionEntity;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -14,7 +15,7 @@ public interface ITransactionDao {
      * @param transactionalId find entity by ID
      * @return entity from storage
      */
-    TransactionEntity find(String transactionalId);
+    Optional<TransactionEntity> find(String transactionalId);
 
     /**
      * Return true if transaction with ID exists
