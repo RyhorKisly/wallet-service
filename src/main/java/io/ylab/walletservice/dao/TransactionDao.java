@@ -3,7 +3,6 @@ package io.ylab.walletservice.dao;
 import io.ylab.walletservice.aop.annotations.Auditable;
 import io.ylab.walletservice.aop.annotations.Loggable;
 import io.ylab.walletservice.core.enums.Operation;
-import io.ylab.walletservice.core.exceptions.NotUniqueException;
 import io.ylab.walletservice.dao.api.ITransactionDao;
 import io.ylab.walletservice.dao.entity.TransactionEntity;
 import lombok.RequiredArgsConstructor;

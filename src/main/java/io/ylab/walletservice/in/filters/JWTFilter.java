@@ -1,7 +1,8 @@
 package io.ylab.walletservice.in.filters;
 
 import io.ylab.walletservice.in.utils.JWTTokenHandler;
-import jakarta.servlet.*;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -27,8 +28,9 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws ServletException, IOException {
         final String header = req.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
-            if(req.getRequestURL().toString().contains("/register")) {
+            if(req.getRequestURL().toString().contains("/register") || req.getRequestURL().toString().contains("/login")) {
                 chain.doFilter(req, res);
+                return;
             }
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;

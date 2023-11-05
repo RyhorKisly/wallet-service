@@ -3,7 +3,6 @@ package io.ylab.walletservice.dao.api;
 import io.ylab.walletservice.dao.entity.AuditEntity;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Interface for generic operations on a repository for Audit.

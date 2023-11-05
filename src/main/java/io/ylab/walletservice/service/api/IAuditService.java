@@ -4,7 +4,6 @@ import io.ylab.walletservice.core.dto.AuditDTO;
 import io.ylab.walletservice.dao.entity.AuditEntity;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Interface for generic operations on a service for an Audit.

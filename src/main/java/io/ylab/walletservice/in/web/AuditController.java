@@ -1,7 +1,6 @@
 package io.ylab.walletservice.in.web;
 
 import io.ylab.walletservice.aop.annotations.Loggable;
-import io.ylab.walletservice.config.properties.JWTProperties;
 import io.ylab.walletservice.core.dto.AuditDTO;
 import io.ylab.walletservice.core.mappers.AuditMapper;
 import io.ylab.walletservice.dao.entity.AuditEntity;

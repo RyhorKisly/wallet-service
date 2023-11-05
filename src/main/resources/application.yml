@@ -1,16 +1,24 @@
-database:
-  driver-class-name: "org.postgresql.Driver"
-  url: "jdbc:postgresql://localhost:5433/wallet_service"
-  user: "ylab"
-  password: "ylab"
-  default-schema: "app"
-  liquibase-schema: "liquibase"
+spring:
+  application:
+    name: wallet-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/wallet_service?ApplicationName=wallet-service
+    username: ylab
+    password: ylab
+  liquibase:
+    default-schema: app
+    liquibase-schema: liquibase
+    change-log: db/changelog/changelog.xml
 
-liquibase:
-  changelog-file: "db/changelog/changelog.xml"
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+server:
+  port: 8081
 
 jwt:
-  secret: "NDQ1ZjAzNjQtMzViZi00MDRjLTljZjQtNjNjYWIyZTU5ZDYw"
-  issuer: "Grigoriy"
-  user: "User"
-  system: "System"
+  secret: NDQ1ZjAzNjQtMzViZi00MDRjLTljZjQtNjNjYWIyZTU5ZDYw
+  issuer: Grigoriy
+  user: User
+  system: System
