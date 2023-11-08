@@ -60,20 +60,20 @@ public class WalletExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-//    /**
-//     * Exceptions in this method haven't cached in app, and we will write common message to user and status 500
-//     * @param ex exception with data about error
-//     * @return {@link ErrorResponse} with message and 500 status
-//     */
-//    @ExceptionHandler({
-//            Exception.class
-//    })
-//    public ResponseEntity<?> handleInnerError(Exception ex) {
-//        ErrorResponse response = new ErrorResponse(
-//                ErrorType.ERROR,
-//                SERVER_ERROR
-//        );
-//        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    /**
+     * Exceptions in this method haven't cached in app, and we will write common message to user and status 500
+     * @param ex exception with data about error
+     * @return {@link ErrorResponse} with message and 500 status
+     */
+    @ExceptionHandler({
+            Exception.class
+    })
+    public ResponseEntity<?> handleInnerError(Exception ex) {
+        ErrorResponse response = new ErrorResponse(
+                ErrorType.ERROR,
+                SERVER_ERROR
+        );
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 }

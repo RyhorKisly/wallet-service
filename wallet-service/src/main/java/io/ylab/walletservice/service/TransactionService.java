@@ -70,8 +70,6 @@ public class TransactionService implements ITransactionService {
         accountService.getByUser(userId);
 
         TransactionEntity entity = saveOrThrow(convertToEntity(dto));
-        entity.setDtCreate(LocalDateTime.now());
-
         if (accountService.updateBalance(dto.getAccountId(), dto) == null) {
             transactionDao.delete(entity.getTransactionId());
             throw new TransactionFailedException(TRANSACTION_FAILED);
@@ -127,6 +125,7 @@ public class TransactionService implements ITransactionService {
      */
     private TransactionEntity saveOrThrow(TransactionEntity entity) {
         try{
+            entity.setDtCreate(LocalDateTime.now());
             entity = transactionDao.save(entity);
         } catch (RuntimeException ex) {
             if(ex.getMessage().contains(TRANSACTION_ID_PKEY)) {

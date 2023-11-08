@@ -35,9 +35,10 @@ import java.util.regex.Pattern;
 public class UserController {
 
     /**
-     * Pattern for validating login like email xxx@xxx.xxx
+     * Pattern for userLogin
      */
-    private static final String EMAIL_PATTERN = "[^@]+@[^@]+\\.[^@.]+";
+    private static final Pattern PATTERN = Pattern.compile("[^@]+@[^@]+\\.[^@.]+");
+
 
     /**
      * Message if entered login has wrong pattern.
@@ -163,8 +164,7 @@ public class UserController {
         } else if (dto.getPassword().length() <= 4 || dto.getPassword().length() >= 20) {
             throw new SizeLengthException(WRONG_PASSWORD_LENGTH);
         }
-        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
-        Matcher matcher = pattern.matcher(dto.getLogin());
+        Matcher matcher = PATTERN.matcher(dto.getLogin());
         if(!matcher.matches()) {
             throw new InvalidLoginException(WRONG_LOGIN_PATTERN);
         }

@@ -40,7 +40,6 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Get jwt token and validate
         final String token = header.split(" ")[1].trim();
         if (!jwtHandler.validate(token)) {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
