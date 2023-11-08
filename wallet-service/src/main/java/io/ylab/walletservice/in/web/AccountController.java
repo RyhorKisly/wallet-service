@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @AllArgsConstructor
 @Loggable
-@Tag(name = "Accounts", description = "Opperations with accounts")
+@Tag(name = "Accounts", description = "Operations with accounts")
 public class AccountController {
 
     /**
