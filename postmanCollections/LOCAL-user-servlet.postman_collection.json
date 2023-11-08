@@ -18,7 +18,7 @@
 				},
 				"method": "GET",
 				"header": [],
-				"url": "http://localhost:8081/wallet-service/users/1"
+				"url": "http://localhost:8081/users/1"
 			},
 			"response": []
 		},
@@ -42,7 +42,7 @@
 						}
 					}
 				},
-				"url": "http://localhost:8081/wallet-service/users"
+				"url": "http://localhost:8081/users"
 			},
 			"response": []
 		},
@@ -57,7 +57,7 @@
 				},
 				"method": "GET",
 				"header": [],
-				"url": "http://localhost:8081/wallet-service/users/me"
+				"url": "http://localhost:8081/users/me"
 			},
 			"response": []
 		}

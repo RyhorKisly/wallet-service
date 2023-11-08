@@ -18,7 +18,7 @@
 				},
 				"method": "GET",
 				"header": [],
-				"url": "http://localhost:8081/wallet-service/users/audit"
+				"url": "http://localhost:8081/users/audit"
 			},
 			"response": []
 		}
