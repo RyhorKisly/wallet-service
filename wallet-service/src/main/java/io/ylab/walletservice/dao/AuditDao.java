@@ -1,11 +1,12 @@
 package io.ylab.walletservice.dao;
 
+import com.zaxxer.hikari.HikariDataSource;
 import io.ylab.starteraspectlogger.aop.annotations.Loggable;
 import io.ylab.walletservice.dao.api.IAuditDao;
 import io.ylab.walletservice.dao.entity.AuditEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import javax.sql.DataSource;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -51,13 +52,13 @@ public class AuditDao implements IAuditDao {
             "RETURNING id;";
 
     /**
-     * define a field with a type {@link DataSource} for further aggregation
+     * define a field with a type {@link HikariDataSource} for further aggregation
      */
-    private final DataSource connection;
+    private final HikariDataSource connection;
 
     /**
      * find set of entities by id of the user
-     * @return set of entities from {@code audits}
+     * @return list of entities from {@code audits}
      */
     @Override
     public List<AuditEntity> findAllAscByDTCreate() {

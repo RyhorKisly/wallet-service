@@ -1,5 +1,6 @@
 package io.ylab.walletservice.dao;
 
+import com.zaxxer.hikari.HikariDataSource;
 import io.ylab.starteraspectaudit.aop.annotations.Auditable;
 import io.ylab.starteraspectlogger.aop.annotations.Loggable;
 import io.ylab.walletservice.dao.api.IAccountDao;
@@ -7,7 +8,6 @@ import io.ylab.walletservice.dao.entity.AccountEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -70,9 +70,9 @@ public class AccountDao implements IAccountDao {
     private static final String UPDATE_ACCOUNT = "UPDATE app.\"Account\" SET balance = ? WHERE id = ?;";
 
     /**
-     * define a field with a type {@link DataSource} for further aggregation
+     * define a field with a type {@link HikariDataSource} for further aggregation
      */
-    private final DataSource connection;
+    private final HikariDataSource connection;
 
     /**
      * find entity by number of an account
