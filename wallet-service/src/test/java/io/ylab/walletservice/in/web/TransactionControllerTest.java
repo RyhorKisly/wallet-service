@@ -1,9 +1,6 @@
 package io.ylab.walletservice.in.web;
 
-import io.ylab.walletservice.core.dto.UserDTO;
-import io.ylab.walletservice.core.enums.UserRole;
 import io.ylab.walletservice.in.utils.JWTTokenHandler;
-import io.ylab.walletservice.utils.IntegrationTestBase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)

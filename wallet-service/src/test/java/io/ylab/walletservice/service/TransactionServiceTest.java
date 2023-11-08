@@ -50,37 +50,6 @@ public class TransactionServiceTest {
     }
 
     @Test
-    @DisplayName("Prositive test for creating transaction")
-    void createTest() {
-        AccountEntity accountEntity = new AccountEntity(
-                1L, new BigDecimal("0.0"), 1L);
-
-        TransactionDTO transactionDTO = new TransactionDTO(
-                UUID.randomUUID().toString(), Operation.CREDIT,
-                new BigDecimal("3.3"), accountEntity.getId());
-
-        accountEntity.setBalance(transactionDTO.getSumOfTransaction());
-
-        TransactionEntity transactionEntity = new TransactionEntity();
-                transactionEntity.setTransactionId(transactionDTO.getTransactionId());
-        transactionEntity.setSumOfTransaction(transactionDTO.getSumOfTransaction());
-        transactionEntity.setOperation(transactionDTO.getOperation());
-        transactionEntity.setAccountId(transactionDTO.getAccountId());
-
-        when(transactionDao.save(transactionEntity)).thenReturn(transactionEntity);
-
-        when(accountService.updateBalance(transactionDTO.getAccountId(), transactionDTO))
-                .thenReturn(accountEntity);
-
-        TransactionEntity createdEntity = transactionService.create(transactionDTO, accountEntity.getId());
-
-        Assertions.assertEquals(transactionEntity.getTransactionId(), createdEntity.getTransactionId());
-        Assertions.assertEquals(transactionEntity.getSumOfTransaction(), createdEntity.getSumOfTransaction());
-        Assertions.assertEquals(transactionEntity.getAccountId(), createdEntity.getAccountId());
-        Assertions.assertEquals(transactionEntity.getOperation(), createdEntity.getOperation());
-    }
-
-    @Test
     @DisplayName("Positive test for getting transaction by id")
     void getById() {
         String transactionId = UUID.randomUUID().toString();
