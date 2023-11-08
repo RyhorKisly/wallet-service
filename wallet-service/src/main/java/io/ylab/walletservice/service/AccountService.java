@@ -62,7 +62,7 @@ public class AccountService implements IAccountService {
      */
     @Override
     public AccountEntity create(AccountDTO accountDTO) {
-        UserEntity userEntity = userService.get(accountDTO.getId());
+        UserEntity userEntity = userService.get(accountDTO.getUserId());
         AccountEntity entity = new AccountEntity();
         entity.setBalance(new BigDecimal("0.0"));
         entity.setUserId(userEntity.getId());

@@ -70,6 +70,7 @@ public class TransactionService implements ITransactionService {
         accountService.getByUser(userId);
 
         TransactionEntity entity = saveOrThrow(convertToEntity(dto));
+        entity.setDtCreate(LocalDateTime.now());
 
         if (accountService.updateBalance(dto.getAccountId(), dto) == null) {
             transactionDao.delete(entity.getTransactionId());
@@ -109,13 +110,12 @@ public class TransactionService implements ITransactionService {
      * @return {@link TransactionEntity}
      */
     private TransactionEntity convertToEntity(TransactionDTO dto) {
-        return new TransactionEntity(
-                dto.getTransactionId(),
-                dto.getOperation(),
-                dto.getSumOfTransaction(),
-                dto.getAccountId(),
-                LocalDateTime.now()
-        );
+        TransactionEntity transactionEntity = new TransactionEntity();
+        transactionEntity.setTransactionId(dto.getTransactionId());
+        transactionEntity.setSumOfTransaction(dto.getSumOfTransaction());
+        transactionEntity.setOperation(dto.getOperation());
+        transactionEntity.setAccountId(dto.getAccountId());
+        return transactionEntity;
     }
 
     /**

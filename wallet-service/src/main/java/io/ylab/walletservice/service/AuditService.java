@@ -9,7 +9,9 @@ import io.ylab.walletservice.service.api.IAuditService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 /**
@@ -45,7 +47,7 @@ public class AuditService implements IAuditService {
     @Override
     public AuditEntity create(AuditDTO auditDTO) {
         AuditEntity auditEntity = new AuditEntity();
-        auditEntity.setDtCreate(LocalDateTime.now());
+        auditEntity.setDtCreate(LocalDateTime.ofInstant(Instant.ofEpochMilli(auditDTO.getDtCreate()), ZoneId.systemDefault()));
         auditEntity.setText(auditDTO.getText());
         return auditDao.save(auditEntity);
     }
