@@ -100,6 +100,14 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.2.0</version>
+		</dependency>
+
+
+
+		<dependency>
 			<groupId>io.ylab</groupId>
 			<artifactId>starter-aspect-logger</artifactId>
 			<version>2.0.5</version>
@@ -112,7 +120,7 @@
 		<dependency>
 			<groupId>io.ylab</groupId>
 			<artifactId>starter-aspect-audit</artifactId>
-			<version>1.0.2</version>
+			<version>1.0.3</version>
 		</dependency>
 	</dependencies>
 

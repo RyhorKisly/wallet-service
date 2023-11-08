@@ -1,5 +1,11 @@
 package io.ylab.walletservice.in.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.ylab.starteraspectlogger.aop.annotations.Loggable;
 import io.ylab.walletservice.core.dto.UserCreateDTO;
 import io.ylab.walletservice.core.dto.UserDTO;
@@ -25,6 +31,7 @@ import java.util.regex.Pattern;
 @RequestMapping("/users")
 @AllArgsConstructor
 @Loggable
+@Tag(name = "Users", description = "For operation with users")
 public class UserController {
 
     /**
@@ -67,6 +74,19 @@ public class UserController {
      * @return status and {@link UserDTO}
      */
      @GetMapping("/{id}")
+     @Operation(summary = "Information about user by Id")
+     @Parameter(description = "Id of user")
+     @ApiResponses(value = {
+             @ApiResponse(responseCode = "200",
+                     description = "Ok",
+                     content = {@Content(mediaType = "application/json")}),
+             @ApiResponse(responseCode = "404",
+                     description = "Bad request",
+                     content = @Content),
+             @ApiResponse(responseCode = "401",
+                     description = "Not authorized",
+                     content = @Content)
+             })
      public ResponseEntity<UserDTO> find(
              @PathVariable Long id
      ) {
@@ -79,6 +99,18 @@ public class UserController {
      * @return status and {@link UserDTO}
      */
     @GetMapping("/me")
+    @Operation(summary = "Information about user with token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Ok",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",
+                    description = "Bad request",
+                    content = @Content),
+            @ApiResponse(responseCode = "401",
+                    description = "Not authorized",
+                    content = @Content)
+    })
     public ResponseEntity<UserDTO> findMe(
             HttpSession session
     ) {
@@ -94,6 +126,19 @@ public class UserController {
      * @return status and {@link UserDTO}
      */
     @PostMapping
+    @Operation(summary = "Save user")
+    @Parameter(description = "DTO for saving user", content = {@Content(mediaType = "application/json")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201",
+                    description = "Created",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",
+                    description = "Bad request",
+                    content = @Content),
+            @ApiResponse(responseCode = "401",
+                    description = "Not authorized",
+                    content = @Content)
+    })
     public ResponseEntity<UserDTO> save(
             @RequestBody UserCreateDTO userCreateDTO
     ) {

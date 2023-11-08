@@ -1,5 +1,11 @@
 package io.ylab.walletservice.in.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.ylab.starteraspectlogger.aop.annotations.Loggable;
 import io.ylab.walletservice.core.dto.TransactionDTO;
 import io.ylab.walletservice.core.dto.UserDTO;
@@ -21,6 +27,7 @@ import java.util.Set;
 @RestController
 @AllArgsConstructor
 @Loggable
+@Tag(name = "Transactions", description = "For operation with transactions")
 public class TransactionController {
 
     /**
@@ -54,6 +61,19 @@ public class TransactionController {
      * @return status and {@link UserDTO}
      */
     @GetMapping("/users/transaction/{accountId}")
+    @Operation(summary = "Information about all transactions by account Id")
+    @Parameter(description = "Account Id. Have to be for user with token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Ok",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",
+                    description = "Bad request",
+                    content = @Content),
+            @ApiResponse(responseCode = "401",
+                    description = "Not authorized",
+                    content = @Content)
+    })
     public ResponseEntity<Set<TransactionDTO>> findAll(
             HttpSession session,
             @PathVariable Long accountId
@@ -67,6 +87,19 @@ public class TransactionController {
     }
 
     @PostMapping("/users/transaction")
+    @Operation(summary = "Create transaction")
+    @Parameter(description = "TransactionDTO", content = {@Content(mediaType = "application/json")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201",
+                    description = "Created",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",
+                    description = "Bad request",
+                    content = @Content),
+            @ApiResponse(responseCode = "401",
+                    description = "Not authorized",
+                    content = @Content)
+    })
     public ResponseEntity<TransactionDTO> create(
             HttpSession session,
             @RequestBody TransactionDTO dto

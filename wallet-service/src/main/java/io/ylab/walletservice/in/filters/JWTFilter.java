@@ -28,7 +28,11 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws ServletException, IOException {
         final String header = req.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
-            if(req.getRequestURL().toString().contains("/register") || req.getRequestURL().toString().contains("/login")) {
+            if(req.getRequestURL().toString().contains("/register") ||
+                    req.getRequestURL().toString().contains("/login") ||
+                    req.getRequestURL().toString().contains("/swagger-ui") ||
+                    req.getRequestURL().toString().contains("/v3/api-docs")
+            ) {
                 chain.doFilter(req, res);
                 return;
             }

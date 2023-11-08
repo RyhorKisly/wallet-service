@@ -1,5 +1,11 @@
 package io.ylab.walletservice.in.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.ylab.starteraspectlogger.aop.annotations.Loggable;
 import io.ylab.walletservice.core.dto.UserAuthenticationDTO;
 import io.ylab.walletservice.core.dto.UserDTO;
@@ -12,6 +18,7 @@ import io.ylab.walletservice.service.api.IUserAuthenticationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +32,7 @@ import java.util.regex.Pattern;
 @RestController
 @AllArgsConstructor
 @Loggable
+@Tag(name = "Authentication", description = "Registration and authorization users")
 public class AuthenticationController {
 
     /**
@@ -66,6 +74,20 @@ public class AuthenticationController {
      * @return status and {@link UserDTO}
      */
     @PostMapping("/register")
+    @GetMapping("/users/transaction/{accountId}")
+    @Operation(summary = "Register user")
+    @Parameter(description = "Registration user with login and password", content = {@Content(mediaType = "application/json")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201",
+                    description = "Created",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",
+                    description = "Bad request",
+                    content = @Content),
+            @ApiResponse(responseCode = "401",
+                    description = "Not authorized",
+                    content = @Content)
+    })
     public ResponseEntity<UserDTO> register(
             @RequestBody UserAuthenticationDTO dto
     ) {
@@ -80,6 +102,19 @@ public class AuthenticationController {
      * @return status and {@link UserDTO}
      */
     @PostMapping("/login")
+    @Operation(summary = "Authorize user")
+    @Parameter(description = "Authorize user with login and password", content = {@Content(mediaType = "application/json")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Authorized",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404",
+                    description = "Bad request",
+                    content = @Content),
+            @ApiResponse(responseCode = "401",
+                    description = "Not authorized",
+                    content = @Content)
+    })
     public ResponseEntity<UserDTO> authorize(
             @RequestBody UserAuthenticationDTO dto
     ) {
