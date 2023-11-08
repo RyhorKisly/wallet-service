@@ -9,6 +9,9 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 /**
  * Class for creating audit
  */
@@ -38,6 +41,7 @@ public class AuditableAspect {
         Object result = proceedingJoinPoint.proceed();
         AuditDTO dto = new AuditDTO();
         dto.setText("Action was performed on the entity by method: " + proceedingJoinPoint.getSignature().toShortString());
+        dto.setDtCreate(LocalDateTime.now().atZone(ZoneId.systemDefault()).toEpochSecond());
         auditWrapperService.create(dto);
         return result;
     }
