@@ -67,7 +67,7 @@ public class AuthenticationService implements IUserAuthenticationService {
 
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setBalance(new BigDecimal("0.0"));
-        accountDTO.setId(userEntity.getId());
+        accountDTO.setUserId(userEntity.getId());
 
         accountService.create(accountDTO);
 

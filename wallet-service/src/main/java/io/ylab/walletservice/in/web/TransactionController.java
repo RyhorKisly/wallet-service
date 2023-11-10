@@ -86,6 +86,12 @@ public class TransactionController {
         return new ResponseEntity<>(dTOs, HttpStatus.OK);
     }
 
+    /**
+     * Create transaction for specific user with his own accountId
+     * @param session get dto of user
+     * @param dto transaction info for creating transaction
+     * @return result with status and saved transaction info
+     */
     @PostMapping("/users/transaction")
     @Operation(summary = "Create transaction")
     @Parameter(description = "TransactionDTO", content = {@Content(mediaType = "application/json")})

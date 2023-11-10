@@ -39,10 +39,10 @@ public class AccountController {
 
     /**
      * Called by the server to allow a controller to handle a GET request.
-     * @param userId for finding account for exact user
+     * @param accountId for finding account for exact user
      * @return status and {@link AccountDTO}
      */
-    @GetMapping("/users/account/{userId}")
+    @GetMapping("/users/account/{accountId}")
     @Operation(summary = "Get account")
     @Parameter(description = "Get account by Id", content = {@Content(mediaType = "application/json")})
     @ApiResponses(value = {
@@ -57,9 +57,9 @@ public class AccountController {
                     content = @Content)
     })
     public ResponseEntity<AccountDTO> find(
-            @PathVariable Long userId
+            @PathVariable Long accountId
     ) {
-        AccountEntity accountEntity = accountService.getByUser(userId);
+        AccountEntity accountEntity = accountService.get(accountId);
         AccountDTO accountDTO = accountMapper.toDTO(accountEntity);
 
         return new ResponseEntity<>(accountDTO, HttpStatus.OK);

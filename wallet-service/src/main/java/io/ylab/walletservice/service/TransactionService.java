@@ -67,7 +67,11 @@ public class TransactionService implements ITransactionService {
      */
     @Override
     public TransactionEntity create(TransactionDTO dto, Long userId) {
-        accountService.getByUser(userId);
+
+        AccountEntity accountEntity = accountService.getByUser(userId);
+        if(!dto.getAccountId().equals(accountEntity.getId())) {
+            throw new WrongAccountIdException(WRONG_NUMBER_ACCOUNT);
+        }
 
         TransactionEntity entity = saveOrThrow(convertToEntity(dto));
         if (accountService.updateBalance(dto.getAccountId(), dto) == null) {
