@@ -4,6 +4,7 @@ import io.ylab.starteraspectlogger.aop.annotations.Loggable;
 import io.ylab.walletservice.core.enums.ErrorType;
 import io.ylab.walletservice.core.errors.ErrorResponse;
 import io.ylab.walletservice.core.exceptions.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * Class for handling exceptions and showing to user exact message and status which we want to show.
  */
 @Loggable
+@Slf4j
 @RestControllerAdvice
 public class WalletExceptionHandler {
 
@@ -39,6 +41,7 @@ public class WalletExceptionHandler {
         ErrorResponse response = new ErrorResponse();
         response.setLogRef(ErrorType.ERROR);
         response.setMessage(ex.getMessage());
+        log.error(ex.getMessage(), ex);
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -56,6 +59,7 @@ public class WalletExceptionHandler {
         ErrorResponse response = new ErrorResponse();
         response.setLogRef(ErrorType.ERROR);
         response.setMessage(ex.getMessage());
+        log.error(ex.getMessage(), ex);
 
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -73,6 +77,7 @@ public class WalletExceptionHandler {
                 ErrorType.ERROR,
                 SERVER_ERROR
         );
+        log.error(ex.getMessage(), ex);
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
