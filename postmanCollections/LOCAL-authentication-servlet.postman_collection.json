@@ -14,14 +14,14 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"login\": \"tesr@tesr.test\",\n    \"password\": \"test35\"\n}",
+					"raw": "{\n    \"login\": \"tesr@tesr.test3\",\n    \"password\": \"test35\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://localhost:8081/wallet-service/register"
+				"url": "http://localhost:8081/register"
 			},
 			"response": []
 		},
@@ -45,7 +45,7 @@
 						}
 					}
 				},
-				"url": "http://localhost:8081/wallet-service/login"
+				"url": "http://localhost:8081/login"
 			},
 			"response": []
 		}

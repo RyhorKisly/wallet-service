@@ -20,14 +20,14 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"id\": \"1\",\n    \"operation\": \"CREDIT\",\n    \"sum_of_transaction\": \"3.5\",\n    \"account_id\": \"1\"\n}",
+					"raw": "{\n    \"id\": \"100\",\n    \"operation\": \"CREDIT\",\n    \"sum_of_transaction\": \"999\",\n    \"account_id\": \"1\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "http://localhost:8081/wallet-service/users/transaction"
+				"url": "http://localhost:8081/users/transaction"
 			},
 			"response": []
 		},
@@ -54,7 +54,7 @@
 						}
 					}
 				},
-				"url": "http://localhost:8081/wallet-service/users/transaction/1"
+				"url": "http://localhost:8081/users/transaction/1"
 			},
 			"response": []
 		}
