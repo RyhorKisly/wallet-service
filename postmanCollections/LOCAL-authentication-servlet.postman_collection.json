@@ -1,0 +1,53 @@
+{
+	"info": {
+		"_postman_id": "d3152b95-d6e3-4edf-a12a-c13a1084cac5",
+		"name": "LOCAL-authentication-servlet",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "26695165",
+		"_collection_link": "https://blue-astronaut-753448.postman.co/workspace/wallet-service~126d125f-834c-427a-9754-ffdf2eed10c2/collection/26695165-d3152b95-d6e3-4edf-a12a-c13a1084cac5?action=share&source=collection_link&creator=26695165"
+	},
+	"item": [
+		{
+			"name": "register user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"login\": \"tesr@tesr.test3\",\n    \"password\": \"test35\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/register"
+			},
+			"response": []
+		},
+		{
+			"name": "login user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": ""
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"login\": \"admin@admin.admin\",\n    \"password\": \"admin\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/login"
+			},
+			"response": []
+		}
+	]
+}

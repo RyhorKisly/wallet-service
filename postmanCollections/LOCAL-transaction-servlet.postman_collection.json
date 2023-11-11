@@ -1,0 +1,62 @@
+{
+	"info": {
+		"_postman_id": "54018830-1465-4553-bae7-ce7daf90ff49",
+		"name": "LOCAL-transaction-servlet",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "26695165",
+		"_collection_link": "https://blue-astronaut-753448.postman.co/workspace/wallet-service~126d125f-834c-427a-9754-ffdf2eed10c2/collection/26695165-54018830-1465-4553-bae7-ce7daf90ff49?action=share&source=collection_link&creator=26695165"
+	},
+	"item": [
+		{
+			"name": "create transaction",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJVc2VyIjp7ImlkIjoxLCJsb2dpbiI6ImFkbWluQGFkbWluLmFkbWluIiwicm9sZSI6IkFETUlOIn0sInN1YiI6ImFkbWluQGFkbWluLmFkbWluIiwiaXNzIjoiR3JpZ29yaXkiLCJpYXQiOjE2OTg5Mzc3ODQsImV4cCI6MTY5OTU0MjU4NH0.I1EKpUL5MI9S0IoP0gXbu15toDNfViuGjNQXi58A8fgF-YqUVoCtTEBt6iJP2jEuq-8y01T-t8ZkBUlUfEb9Yg"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"100\",\n    \"operation\": \"CREDIT\",\n    \"sum_of_transaction\": \"999\",\n    \"account_id\": \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/users/transaction"
+			},
+			"response": []
+		},
+		{
+			"name": "get history of transactions",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJVc2VyIjp7ImlkIjoxLCJsb2dpbiI6ImFkbWluIiwicm9sZSI6IkFETUlOIn0sInN1YiI6ImFkbWluIiwiaXNzIjoiR3JpZ29yaXkiLCJpYXQiOjE2OTgxNDg4NzIsImV4cCI6MTY5ODc1MzY3Mn0.4PTldBFxYqvUD-wNBzYGOQU_vzCEKpOifbz1O5h4HDNHc4ExZpF77FCLjBUA52_jsVyqCUTXJ2erbnq9LBdXfg"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/users/transaction/1"
+			},
+			"response": []
+		}
+	]
+}

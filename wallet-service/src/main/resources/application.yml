@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: wallet-service
+  datasource:
+    url: jdbc:postgresql://localhost:5433/wallet_service?ApplicationName=wallet-service
+    driver-class-name: org.postgresql.Driver
+    username: ylab
+    password: ylab
+    hikari:
+      connection-init-sql: "CREATE SCHEMA IF NOT EXISTS app; CREATE SCHEMA IF NOT EXISTS liquibase;"
+  liquibase:
+    default-schema: app
+    liquibase-schema: liquibase
+    change-log: db/changelog/changelog.xml
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+server:
+  port: 8081
+
+jwt:
+  secret: NDQ1ZjAzNjQtMzViZi00MDRjLTljZjQtNjNjYWIyZTU5ZDYw
+  issuer: Grigoriy
+  user: User
+  system: System
+
+app:
+  change-log-drop: db/changelog/003-drop-table.xml
+  default-schema: app

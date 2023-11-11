@@ -1,0 +1,65 @@
+{
+	"info": {
+		"_postman_id": "98a0187f-b80d-433a-a35e-504ec3410c80",
+		"name": "LOCAL-user-servlet",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "26695165",
+		"_collection_link": "https://blue-astronaut-753448.postman.co/workspace/wallet-service~126d125f-834c-427a-9754-ffdf2eed10c2/collection/26695165-98a0187f-b80d-433a-a35e-504ec3410c80?action=share&source=collection_link&creator=26695165"
+	},
+	"item": [
+		{
+			"name": "get User",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJVc2VyIjp7ImlkIjoxLCJsb2dpbiI6ImFkbWluQGFkbWluLmFkbWluIiwicm9sZSI6IkFETUlOIn0sInN1YiI6ImFkbWluQGFkbWluLmFkbWluIiwiaXNzIjoiR3JpZ29yaXkiLCJpYXQiOjE2OTg5Mzc3ODQsImV4cCI6MTY5OTU0MjU4NH0.I1EKpUL5MI9S0IoP0gXbu15toDNfViuGjNQXi58A8fgF-YqUVoCtTEBt6iJP2jEuq-8y01T-t8ZkBUlUfEb9Yg"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8081/users/1"
+			},
+			"response": []
+		},
+		{
+			"name": "save User",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJVc2VyIjp7ImlkIjoxLCJsb2dpbiI6ImFkbWluQGFkbWluLmFkbWluIiwicm9sZSI6IkFETUlOIn0sInN1YiI6ImFkbWluQGFkbWluLmFkbWluIiwiaXNzIjoiR3JpZ29yaXkiLCJpYXQiOjE2OTg5Mzc3ODQsImV4cCI6MTY5OTU0MjU4NH0.I1EKpUL5MI9S0IoP0gXbu15toDNfViuGjNQXi58A8fgF-YqUVoCtTEBt6iJP2jEuq-8y01T-t8ZkBUlUfEb9Yg"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"login\": \"test@test.test4\",\n    \"password\": \"test2\",\n    \"role\": \"USER\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8081/users"
+			},
+			"response": []
+		},
+		{
+			"name": "me",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzUxMiJ9.eyJVc2VyIjp7ImlkIjoxLCJsb2dpbiI6ImFkbWluQGFkbWluLmFkbWluIiwicm9sZSI6IkFETUlOIn0sInN1YiI6ImFkbWluQGFkbWluLmFkbWluIiwiaXNzIjoiR3JpZ29yaXkiLCJpYXQiOjE2OTg5Mzc3ODQsImV4cCI6MTY5OTU0MjU4NH0.I1EKpUL5MI9S0IoP0gXbu15toDNfViuGjNQXi58A8fgF-YqUVoCtTEBt6iJP2jEuq-8y01T-t8ZkBUlUfEb9Yg"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:8081/users/me"
+			},
+			"response": []
+		}
+	]
+}
