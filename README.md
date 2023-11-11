@@ -12,7 +12,7 @@
     - Testcontainers; 
     - Mockmvc;
     - Liquibase;
-    - Swagger (создание swagger при помощи аннотаций на контроллерах);
+    - Swagger -> SpringDoc (создание swagger при помощи аннотаций на контроллерах);
     - Lombock.
 
   - Также в проекте использовались следующие технологии:
